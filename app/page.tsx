@@ -219,13 +219,13 @@ const GAME_DATA = {
 };
 
 // Components
-const GlitchText = ({ text, className = "" }) => (
+const GlitchText = ({ text, className = "" }: { text: string; className?: string }) => (
   <div className={`relative inline-block ${className}`}>
     <span className="relative z-10">{text}</span>
   </div>
 );
 
-const CharacterCard = ({ image, name, description, icon: Icon }) => (
+const CharacterCard = ({ image, name, description, icon: Icon }: { image?: string; name: string; description: string; icon?: React.ElementType }) => (
   <div className="group relative overflow-hidden rounded-lg shadow-2xl h-80 bg-gradient-to-b from-gray-900 to-black border border-red-900/30 hover:border-red-600 transition-all duration-300 hover:shadow-red-900/50">
     <div className="absolute inset-0">
       <img
@@ -245,7 +245,7 @@ const CharacterCard = ({ image, name, description, icon: Icon }) => (
   </div>
 );
 
-const StatBox = ({ label, value, icon: Icon, color }) => (
+const StatBox = ({ label, value, icon: Icon, color }: { label: string; value: string | number; icon?: React.ElementType; color: string }) => (
   <div className={`p-4 rounded-lg border ${color} bg-black/50 backdrop-blur-sm`}>
     <div className="flex items-center gap-2 mb-2">
       {Icon && <Icon className={`w-4 h-4 ${color.replace('border-', 'text-')}`} />}
@@ -255,7 +255,7 @@ const StatBox = ({ label, value, icon: Icon, color }) => (
   </div>
 );
 
-const Timer = ({ initialTime, onExpire }) => {
+const Timer = ({ initialTime, onExpire }: { initialTime: number; onExpire: () => void }) => {
   const [timeLeft, setTimeLeft] = useState(initialTime);
 
   useEffect(() => {
