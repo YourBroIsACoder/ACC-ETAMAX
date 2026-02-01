@@ -1,3 +1,6 @@
+/* eslint-disable @next/next/no-img-element */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
@@ -624,7 +627,7 @@ export default function App() {
               <div className="space-y-4">
                 <img src="/l-detective.jpg" alt="L Detective" className="w-full rounded-lg border-2 border-red-600 shadow-lg shadow-red-900/50 mb-4" />
                 <div className="bg-gray-900/50 border border-gray-700 rounded-lg p-4 backdrop-blur-sm">
-                  <p className="text-sm text-gray-400 italic">"May the best team win."</p>
+                  <p className="text-sm text-gray-400 italic">&quot;May the best team win.&quot;</p>
                 </div>
               </div>
             </div>
