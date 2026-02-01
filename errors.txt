@@ -1,0 +1,91 @@
+﻿
+> my-v0-project@0.1.0 build
+> next build
+
+   Γû▓ Next.js 15.2.6
+
+   Creating an optimized production build ...
+ Γ£ô Compiled successfully
+   Linting and checking validity of types ...
+node.exe : Failed to compile.
+At F:\npm.ps1:29 char:3
++   & $NODE_EXE $NPM_CLI_JS 
+$args
++   
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo           
+   : NotSpecified: (Failed   
+  to compile.:String) [],    
+ RemoteException
+    + FullyQualifiedErrorId  
+   : NativeCommandError
+ 
+
+./app/page.tsx:347:67
+Type error: Property 
+'groupD' does not exist on 
+type '{ groupA: { id: 
+number; story: string; 
+cipher: string; clue: 
+string; answer: string; 
+hint: string; }[]; groupB: { 
+id: number; story: string; 
+cipher: string; clue: 
+string; answer: string; 
+hint: string; }[]; groupC: { 
+...; }[]; }'. Did you mean 
+'groupA'?
+
+[0m [90m 345 |[39m     
+[36mif[39m (round 
+[33m===[39m [35m1[39m 
+[33m&&[39m phase 
+[33m===[39m [35m1[39m) 
+[36mreturn[39m [33mGAME_DA
+TA[39m[33m.[39mround1Phase
+1[groupKey] [33m||[39m 
+[][33m;[39m[0m
+[0m [90m 346 |[39m     
+[36mif[39m (round 
+[33m===[39m [35m1[39m 
+[33m&&[39m phase 
+[33m===[39m [35m2[39m) 
+[36mreturn[39m [33mGAME_DA
+TA[39m[33m.[39mround1Phase
+2[groupKey] [33m||[39m 
+[][33m;[39m[0m
+[0m[31m[1m>[22m[39m[90m
+ 347 |[39m     [36mif[39m 
+(round [33m===[39m 
+[35m2[39m [33m&&[39m 
+phase [33m===[39m 
+[35m1[39m) 
+[36mreturn[39m [33mGAME_DA
+TA[39m[33m.[39mround2Phase
+1[groupKey] [33m||[39m 
+[][33m;[39m[0m
+[0m [90m     |[39m        
+                             
+                             
+ [31m[1m^[22m[39m[0m
+[0m [90m 348 |[39m     
+[36mif[39m (round 
+[33m===[39m [35m2[39m 
+[33m&&[39m phase 
+[33m===[39m [35m2[39m) 
+[36mreturn[39m [33mGAME_DA
+TA[39m[33m.[39mround2Phase
+2[groupKey] [33m||[39m 
+[][33m;[39m[0m
+[0m [90m 349 |[39m     
+[36mif[39m (round 
+[33m===[39m [35m3[39m) 
+[36mreturn[39m [33mGAME_DA
+TA[39m[33m.[39mround3 
+[33m||[39m 
+[][33m;[39m[0m
+[0m [90m 350 |[39m     
+[36mreturn[39m 
+[][33m;[39m[0m
+Next.js build worker exited 
+with code: 1 and signal: null

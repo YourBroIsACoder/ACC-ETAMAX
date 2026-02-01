@@ -341,10 +341,11 @@ export default function App() {
   };
 
   const getGameDataForCurrentPhase = (): any[] => {
-    if (round === 1 && phase === 1) return GAME_DATA.round1Phase1[`group${group}`] || [];
-    if (round === 1 && phase === 2) return GAME_DATA.round1Phase2[`group${group}`] || [];
-    if (round === 2 && phase === 1) return GAME_DATA.round2Phase1[`group${group}`] || [];
-    if (round === 2 && phase === 2) return GAME_DATA.round2Phase2[`group${group}`] || [];
+    const groupKey = `group${group}`;
+    if (round === 1 && phase === 1) return (GAME_DATA.round1Phase1 as any)[groupKey] || [];
+    if (round === 1 && phase === 2) return (GAME_DATA.round1Phase2 as any)[groupKey] || [];
+    if (round === 2 && phase === 1) return (GAME_DATA.round2Phase1 as any)[groupKey] || [];
+    if (round === 2 && phase === 2) return (GAME_DATA.round2Phase2 as any)[groupKey] || [];
     if (round === 3) return GAME_DATA.round3 || [];
     return [];
   };
@@ -411,9 +412,9 @@ export default function App() {
 
   // Skip handler - only works when video is playing
   useEffect(() => {
-    const handleSkip = (e) => {
+    const handleSkip = (e: KeyboardEvent | MouseEvent) => {
       // Only allow skip if video has started and we're still in loading state
-      if (gameState === 'loading' && videoStarted && (e.code === 'Space' || e.type === 'click')) {
+      if (gameState === 'loading' && videoStarted && ((e as KeyboardEvent).code === 'Space' || e.type === 'click')) {
         handleVideoEnd();
       }
     };
