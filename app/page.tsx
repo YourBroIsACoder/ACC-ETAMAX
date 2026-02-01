@@ -269,7 +269,7 @@ const Timer = ({ initialTime, onExpire }: { initialTime: number; onExpire: () =>
     return () => clearInterval(timer);
   }, [timeLeft, onExpire]);
 
-  const formatTime = (seconds) => {
+  const formatTime = (seconds: number) => {
     const m = Math.floor(seconds / 60);
     const s = seconds % 60;
     return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
@@ -322,7 +322,7 @@ export default function App() {
     }, 800); // Match this with CSS transition duration
   };
 
-  const handleLogin = (e) => {
+  const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
     if (!teamName || !teamId) return;
 
@@ -340,7 +340,7 @@ export default function App() {
     setGameState('playing');
   };
 
-  const getGameDataForCurrentPhase = () => {
+  const getGameDataForCurrentPhase = (): any[] => {
     if (round === 1 && phase === 1) return GAME_DATA.round1Phase1[`group${group}`] || [];
     if (round === 1 && phase === 2) return GAME_DATA.round1Phase2[`group${group}`] || [];
     if (round === 2 && phase === 1) return GAME_DATA.round2Phase1[`group${group}`] || [];
@@ -351,7 +351,7 @@ export default function App() {
 
   const currentClue = getGameDataForCurrentPhase()[stageIndex];
 
-  const handleSubmitAnswer = (e) => {
+  const handleSubmitAnswer = (e: React.FormEvent) => {
     e.preventDefault();
     if (!inputAnswer) return;
 
