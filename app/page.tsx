@@ -17,8 +17,8 @@ import { Skull, Clock, Lock, Terminal, Eye, MapPin, AlertTriangle, ChevronRight,
  */
 
 // Group definitions based on Team ID
-const getGroupFromTeamId = (teamId, totalGroups) => {
-  const id = parseInt(teamId) || 0;
+const getGroupFromTeamId = (teamId: string | number, totalGroups: number): string => {
+  const id = parseInt(teamId.toString()) || 0;
   return String.fromCharCode(65 + (id % totalGroups)); // A, B, C, D, E
 };
 
@@ -300,7 +300,7 @@ export default function App() {
   const [errorMsg, setErrorMsg] = useState('');
   const [logs, setLogs] = useState<string[]>([]);
 
-  const addLog = (msg) => {
+  const addLog = (msg: string) => {
     const timestamp = new Date().toLocaleTimeString();
     setLogs(prev => [`[${timestamp}] ${msg}`, ...prev]);
   };
@@ -496,11 +496,11 @@ export default function App() {
           {/* Radial gradient overlay for the fade effect */}
           <div className="absolute pointer-events-none inset-0 flex items-center justify-center bg-black [mask-image:radial-gradient(ellipse_at_center,transparent_20%,black)]"></div>
         </div>
-        
+
         {/* Dramatic gradient background with Death Note colors */}
         <div className="absolute inset-0 bg-gradient-to-br from-black via-red-950/20 to-black"></div>
         <div className="absolute inset-0 bg-gradient-to-tr from-black via-gray-950 to-red-950/30"></div>
-        
+
         {/* Animated red glow orbs */}
         <div className="fixed inset-0 opacity-40 pointer-events-none">
           <div className="absolute top-20 right-20 w-96 h-96 bg-red-900 rounded-full mix-blend-multiply filter blur-3xl animate-pulse"></div>
@@ -550,11 +550,11 @@ export default function App() {
                     CTF CHAMPIONSHIP
                   </span>
                 </h2>
-                
+
                 <div className="text-4xl md:text-5xl font-bold text-red-500 drop-shadow-[0_0_20px_rgba(239,68,68,0.7)]">
                   2025
                 </div>
-                
+
                 <p className="text-xl md:text-2xl text-gray-300 font-light leading-relaxed max-w-2xl mx-auto mt-6">
                   25 Teams. 3 Rounds. 1 Death Note.
                   <br />
