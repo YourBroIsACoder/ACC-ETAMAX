@@ -4,246 +4,349 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
-import { Skull, Clock, Lock, Terminal, Eye, MapPin, AlertTriangle, ChevronRight, Binary, FileText, Ghost, Flame, Zap, Shield, BookOpen, Star, Trophy, Users } from 'lucide-react';
+import { Skull, Clock, Lock, Terminal, Eye, MapPin, AlertTriangle, ChevronRight, Binary, FileText, Ghost, Flame, Zap, Shield, BookOpen, Star, Trophy, Users, Hash, Cpu } from 'lucide-react';
 
 /**
- * AGNEL CYBER CELL - DEATH NOTE CTF TOURNAMENT
+ * AGNEL CYBER CELL - CIPHER TRAIL EVENT
  * 
  * TOURNAMENT STRUCTURE:
- * Round 1 Phase 1: 5 Groups x 5 Teams -> 1 eliminated per group (20 advance)
- * Round 1 Phase 2: 5 Groups x 4 Teams -> 1 eliminated per group (15 advance)
- * Round 2 Phase 1: 3 Groups x 5 Teams -> 2 eliminated per group (9 advance)
- * Round 2 Phase 2: 3 Groups x 3 Teams -> Finals
- * Round 3: 3 Teams on common path -> 1 Winner
+ * Total Teams: 15 (divided into 3 groups of 5 teams each)
  * 
- * GROUP ASSIGNMENT: Team ID % appropriate divisor determines group
+ * Phase 1: Group Stage (Parallel Paths)
+ * - Round 1: 5 teams per group → 1 eliminated → 4 remain (12 total)
+ * - Round 2: 4 teams per group → 1 eliminated → 3 remain (9 total)
+ * - Round 3: 3 teams per group → 2 eliminated → 1 remains (3 total)
+ * 
+ * Phase 2: Convergence (Single Path)
+ * - Round 4 (Semi-Finals): 3 teams → 1 eliminated → 2 remain
+ * - Round 5 (Grand Finale): 2 teams → 1 eliminated → 1 WINNER
  */
 
-// Group definitions based on Team ID
-const getGroupFromTeamId = (teamId: string | number, totalGroups: number): string => {
-  const id = parseInt(teamId.toString()) || 0;
-  return String.fromCharCode(65 + (id % totalGroups)); // A, B, C, D, E
+// Group assignment: Team IDs 1-5 = Group A, 6-10 = Group B, 11-15 = Group C
+const getGroupFromTeamId = (teamId: number): string => {
+  if (teamId >= 1 && teamId <= 5) return 'A';
+  if (teamId >= 6 && teamId <= 10) return 'B';
+  if (teamId >= 11 && teamId <= 15) return 'C';
+  return 'INVALID';
 };
 
-// GAME DATA - Different data for each group and round/phase
+// GAME DATA - Campus hunt with encrypted riddles
+// Flow: Encrypted Riddle → Decode → Find Location → Get Leetspeak Key → Enter Key
 const GAME_DATA = {
-  round1Phase1: {
-    groupA: [
-      {
-        id: 1,
-        story: "Target identified. Location: Engineering Block Entrance.",
-        cipher: "Caesar (+3): HQJLQHHULQJ",
-        clue: "Find the date carved on the main pillar.",
-        answer: "2015",
-        hint: "Look at the historical plaque."
-      },
-      {
-        id: 2,
-        story: "Second victim awaits. The library holds secrets.",
-        cipher: "Base64: TGlicmFyeSBSeWFrdQ==",
-        clue: "Count red books on the top shelf.",
-        answer: "7",
-        hint: "Academic section, third floor."
-      },
-      {
-        id: 3,
-        story: "Final location for Phase 1. The cafeteria knows.",
-        cipher: "Vigenere (Key: KIRA): FDQQHHQ",
-        clue: "Price of the special meal today.",
-        answer: "120",
-        hint: "Ask at the counter."
-      }
-    ],
-    groupB: [
-      {
-        id: 1,
-        story: "Commence Protocol B. Chemistry lab entrance.",
-        cipher: "Binary: 01000011 01001000 01000101 01001101",
-        clue: "Find the periodic table poster, locate element 79.",
-        answer: "AU",
-        hint: "Gold is valuable."
-      },
-      {
-        id: 2,
-        story: "Second phase. Sports complex awaits.",
-        cipher: "Morse: ... .--. --- .-. - ...",
-        clue: "Jersey number of the team captain.",
-        answer: "23",
-        hint: "Main gym, locker area."
-      },
-      {
-        id: 3,
-        story: "Almost there. Computer lab basement.",
-        cipher: "Hex: 50 41 53 53 57 4F 52 44",
-        clue: "Last 4 digits of the lab access code on bulletin board.",
-        answer: "9876",
-        hint: "Near the entrance."
-      }
-    ],
-    groupC: [
-      {
-        id: 1,
-        story: "Group C protocol initiated. Main auditorium.",
-        cipher: "Caesar (+5): IJMFQSQYF",
-        clue: "Seat number written behind the main screen.",
-        answer: "B7",
-        hint: "Backstage area."
-      },
-      {
-        id: 2,
-        story: "Moving forward. Admin building reception.",
-        cipher: "Base64: QURNSUkxUk9P",
-        clue: "Find the founding year on the wall plaque.",
-        answer: "1985",
-        hint: "Near the receptionist desk."
-      },
-      {
-        id: 3,
-        story: "Final check. Student center bulletin board.",
-        cipher: "Vigenere (Key: DEATH): IJSRXSRE",
-        clue: "Phone number of the lost and found.",
-        answer: "9876543210",
-        hint: "Main notice board."
-      }
-    ],
-    groupD: [
-      {
-        id: 1,
-        story: "Phase 1 Group D. Botanical garden entrance.",
-        cipher: "Binary: 01000110 01001100 01001111 01010111 01000101 01010010",
-        clue: "Count the marble benches.",
-        answer: "12",
-        hint: "Central pathway."
-      },
-      {
-        id: 2,
-        story: "Moving to hostel zone.",
-        cipher: "Hex: 52 4F 4F 4D 32 30 31",
-        clue: "Building name written on the gate.",
-        answer: "SHANTI",
-        hint: "Main residential area."
-      },
-      {
-        id: 3,
-        story: "Final location. The temple near campus.",
-        cipher: "Caesar (+7): YPHTJSL",
-        clue: "Count the bell rings when you arrive at 3 PM.",
-        answer: "3",
-        hint: "Listen carefully."
-      }
-    ],
-    groupE: [
-      {
-        id: 1,
-        story: "Group E commences. Old campus building.",
-        cipher: "Vigenere (Key: NOTE): HSVBFOB",
-        clue: "Year inscribed on the cornerstone.",
-        answer: "1923",
-        hint: "Bottom left corner of the building."
-      },
-      {
-        id: 2,
-        story: "Second challenge. Parking lot number 5.",
-        cipher: "Base64: UEFSSwox",
-        clue: "Slot number of the reserved spot.",
-        answer: "15",
-        hint: "Near the entrance gate."
-      },
-      {
-        id: 3,
-        story: "Final phase. Water fountain junction.",
-        cipher: "Binary: 01000001 01000111 01000101",
-        clue: "Initials on the stone bench.",
-        answer: "AGE",
-        hint: "Central courtyard."
-      }
-    ]
-  },
-  round1Phase2: {
-    groupA: [
-      { id: 1, story: "Advanced Group A.", cipher: "Vigenere (Key: SHINIGAMI): PQVVGMF", clue: "Find the mosaic.", answer: "LIBRARY", hint: "Artistic section." },
-      { id: 2, story: "Deeper into chaos.", cipher: "Caesar (+4): XMSR", clue: "Count items.", answer: "8", hint: "Administration area." }
-    ],
-    groupB: [
-      { id: 1, story: "Phase 2 Group B intensifies.", cipher: "Base64: Q0hBTExFTkdF", clue: "Secret code.", answer: "CHALLENGE", hint: "Hidden location." },
-      { id: 2, story: "Final barrier.", cipher: "Hex: 46 49 4E 41 4C", clue: "Ultimate answer.", answer: "FINAL", hint: "Top floor." }
-    ],
-    groupC: [
-      { id: 1, story: "Group C Phase 2 begins.", cipher: "Binary: 01010000 01010010 01010011", clue: "Mystery location.", answer: "PRS", hint: "Building sector." },
-      { id: 2, story: "Approaching victory.", cipher: "Caesar (+6): YLVXV", clue: "The answer awaits.", answer: "QUEST", hint: "Garden area." }
-    ],
-    groupD: [
-      { id: 1, story: "Group D Phase 2 active.", cipher: "Vigenere (Key: RYUK): GSVPH", clue: "Dark location.", answer: "REALM", hint: "Underground passage." },
-      { id: 2, story: "Final step.", cipher: "Base64: RVAFVA==", clue: "Code retrieved.", answer: "HEAVEN", hint: "Rooftop." }
-    ],
-    groupE: [
-      { id: 1, story: "Group E Phase 2 initiated.", cipher: "Binary: 01001110 01001111 01010100 01000101", clue: "Sacred item.", answer: "NOTE", hint: "Holy place." },
-      { id: 2, story: "Climax approaches.", cipher: "Hex: 44 4F 4F 4D", clue: "Ultimate reality.", answer: "DOOM", hint: "Tower." }
-    ]
-  },
-  round2Phase1: {
-    groupA: [
-      { id: 1, story: "15 survive. Group A Round 2 Phase 1.", cipher: "Vigenere (Key: LIGHT): OHYPO", clue: "Find the beacon.", answer: "TOWER", hint: "Highest point visible." },
-      { id: 2, story: "Two barriers remain.", cipher: "Caesar (+8): YVGFK", clue: "Sacred symbol.", answer: "TRUTH", hint: "Centre of campus." },
-      { id: 3, story: "Elimination looms.", cipher: "Base64: RElWTE5FTlk=", clue: "Count divinity.", answer: "DIVINELY", hint: "Spiritual place." }
-    ],
-    groupB: [
-      { id: 1, story: "Group B Round 2 Phase 1 - Intensifies.", cipher: "Binary: 01000101 01010100 01010010 01001001", clue: "Path revealed.", answer: "ETRI", hint: "Research institute." },
-      { id: 2, story: "Pressure increases.", cipher: "Hex: 4E 4F 54 45 42", clue: "Notebook fragment.", answer: "NOTEB", hint: "Study area." },
-      { id: 3, story: "Near the edge.", cipher: "Vigenere (Key: KIRA): ZYSLWZ", clue: "Killer's trace.", answer: "SHADOW", hint: "Dark corner." }
-    ],
-    groupC: [
-      { id: 1, story: "Group C fights for survival.", cipher: "Caesar (+12): URYYBJBEYQ", clue: "Encrypted greeting.", answer: "HELLOWORLD", hint: "Tech area." },
-      { id: 2, story: "Two teams will fall.", cipher: "Base64: V0lMREM=", clue: "Wildcard discovered.", answer: "WILDC", hint: "Unexpected place." },
-      { id: 3, story: "Last stand.", cipher: "Binary: 01010010 01000001 01010000 01010100", clue: "Musical note.", answer: "RAPT", hint: "Auditorium again." }
-    ]
-  },
-  round2Phase2: {
-    groupA: [
-      { id: 1, story: "9 remain. Group A - Final eliminations.", cipher: "Vigenere (Key: DEATHNOTE): QAPZNDHGZ", clue: "Convergence point.", answer: "CONVERGENC", hint: "Main plaza." }
-    ],
-    groupB: [
-      { id: 1, story: "Group B seeks dominance.", cipher: "Hex: 44 4F 4D 49 4E 41 54 45", clue: "Rise of the chosen.", answer: "DOMINATE", hint: "Power chamber." }
-    ],
-    groupC: [
-      { id: 1, story: "Group C makes final push.", cipher: "Caesar (+15): YBKNFNTZGT", clue: "The god emerges.", answer: "GODUNCOVRS", hint: "Highest ground." }
-    ]
-  },
-  round3: [
-    {
+  // ROUND 1: First location hunt
+  round1: {
+    groupA: {
       id: 1,
-      story: "Only 3 teams remain. The Death Note lies at the highest point of the campus. Find it before your rivals.",
-      cipher: "Vigenere (Key: LIGHTYAGAMI): BSVHFBV",
-      clue: "The ultimate answer awaits at the rooftop of the tallest building on campus. Look for the black notebook hidden in plain sight.",
-      answer: "ROOFTOP",
-      hint: "Aim higher. Always higher."
+      type: 'physical',
+      title: 'Round 1: Decode & Hunt',
+      // CAESAR CIPHER (Shift 13 - ROT13)
+      riddle: "Gjb avarf fvg ba zl fxva, fvqr ol fvqr, N qbhoyr zveebe lbh pna'g qvivqr. V fgnaq jurer uhatro zrrgf vgf pher, Jngpuvat fanpx ehaf, ybhq naq fher. Svaq 99 jurer pnagrra pebjqf or — Gur ahzorerq gehax vf zr.",
+      cipherType: "ROT13",
+      hints: [
+        "President Ria D'Costa once said she'd organize a meetup here. That was 6 months ago. We're still waiting. Meanwhile, Light Yagami solved 12 cases. You? Still reading this hint 😴",
+        "Ebadur Rehman (VP) claims he knows where this is. He also claimed he'd finish the documentation last week. Trust issues much? Fun fact: In Bollywood, the hero always finds the location in the rain. It's not raining. Sorry! ☔",
+        "Akshath Narvekar (the developer of this game) hid the answer in the code. Just kidding, he didn't. He was too busy debugging. Ryuk is eating apples and laughing at your confusion 🍎. HINT: Every letter shifted by 13 positions!"
+      ],
+      location: "TREE99",
+      chit: "ACC{S0M30N3}",
+      answer: "ACC{S0M30N3}",
+      decodedKey: "SOMEONE",
+      timer: 900
+    },
+    groupB: {
+      id: 1,
+      type: 'physical',
+      title: 'Round 1: Decode & Hunt',
+      // MORSE CODE
+      riddle: "..-. --- ..- .-. / .- -. -.. / . .. --. .... - / -- .- .-. -.- / -- -.-- / ... .. -.. . --..-- / -... -.-- / --. ..- .. . - / .--. .-. .- -.-- . .-. ... / .. / ... - .- -. -.. / .- -. -.. / .... .. -.. . .-.-.- / -... . .... .. -. -.. / - .... . / .--. .-.. .- -. . / .-- .... . .-. . / ... -.- .. .-.. .-.. ... / .- .-. . / --. .-. --- .-- -. --..-- / -. . .- .-. / .-. .. -. --. .. -. --. / ..-. .- .. - .... / -... ..- - / -- .- -.. . / --- ..-. / ... - --- -. . .-.-.- / ..-. .. -. -.. / - .... . / - .-. ..- -. -.- / .-- .. - .... / ....- ---.. .----. ... / ..-. .- - . / em...- / -.-- --- ..- .----. ...- . / .-. . .- -.-. .... . -.. / - .... . / ... .. .-.. . -. - / --. .- - . .-.-.-",
+      cipherType: "MORSE",
+      hints: [
+        "Pratiksha Patil (Technical Head) debugged code here for 6 hours. Forgot a semicolon. Joel Bijo found it in 30 seconds. Awkward. Also, L from Death Note would've deduced this location just by looking at the cipher. You're not L. 🔍",
+        "According to Yash Patil's calculations, this tree is exactly 48 meters from... wait, wrong Yash. That's Yash Bodake (Creative Team). Numbers aren't his thing. Try asking the canteen uncle instead! 🌳",
+        "Shah Rukh Khan once said 'Bade bade deshon mein aisi choti choti baatein hoti rehti hai.' This tree doesn't care about Bollywood wisdom. Neither does Misa Amane. Keep searching! 🎬 HINT: Dots and dashes, like old telegraphs!"
+      ],
+      location: "TREE48",
+      chit: "ACC{TH3}",
+      answer: "ACC{TH3}",
+      decodedKey: "THE",
+      timer: 900
+    },
+    groupC: {
+      id: 1,
+      type: 'physical',
+      title: 'Round 1: Decode & Hunt',
+      // BINARY CODE (ASCII)
+      riddle: "01000101 01101001 01100111 01101000 01110100 00100000 01100001 01101110 01100100 00100000 01111010 01100101 01110010 01101111 00100000 01101111 01101110 00100000 01101101 01111001 00100000 01100010 01100001 01110010 01101011 00101100 00001010 01001001 00100000 01110111 01100001 01110100 01100011 01101000 00100000 01110100 01101000 01100101 00100000 01101100 01100001 01110111 01101110 00100000 01100110 01110010 01101111 01101101 00100000 01100100 01100001 01110111 01101110 00100000 01110100 01101111 00100000 01100100 01100001 01110010 01101011 00101110 00001010 01010111 01101000 01100101 01110010 01100101 00100000 01101000 01101111 01110011 01110100 01100101 01101100 00100000 01100101 01111001 01100101 01110011 00100000 01110011 01100101 01100101 00100000 01100110 01101001 01100101 01101100 01100100 01110011 00100000 01101111 01100110 00100000 01100111 01110010 01100101 01100101 01101110 00101100 00001010 01001001 00100000 01110011 01110100 01100001 01101110 01100100 00100000 01100010 01100101 01110100 01110111 01100101 01100101 01101110 00100000 01110100 01101000 01100101 00100000 01100011 01100001 01101100 01101101 00100000 01100001 01101110 01100100 00100000 01110011 01100011 01100101 01101110 01100101 00101110 00001010 01000110 01101001 01101110 01100100 00100000 00111000 00110000 00100000 01110111 01101000 01100101 01110010 01100101 00100000 01100010 01110010 01100101 01100101 01111010 01100101 01110011 00100000 01110010 01110101 01101110 00100000 11100010 10000000 10010100 00001010 01011001 01101111 01110101 01110010 00100000 01101110 01100101 01111000 01110100 00100000 01100011 01101100 01110101 01100101 00100111 01110011 00100000 01110001 01110101 01101001 01100101 01110100 01101100 01111001 00100000 01110111 01101111 01101110 00101110",
+      cipherType: "BINARY",
+      hints: [
+        "Alisha D'Cunha and Cheryl Cardoza had a team meeting here once. Lasted 5 minutes. Spent 2 hours taking aesthetic photos. Priorities! 📸 Meanwhile, Ryuk is judging from the shinigami realm.",
+        "Justin Kunjumon (Creative Head) designed a poster about this location. It was beautiful. It was also completely wrong. The tree is NOT blue. Near from Death Note says: 'Creativity ≠ Accuracy' 🎨",
+        "In DDLJ, Simran ran through fields. In 3 Idiots, Rancho ran on campus. You? Running out of time looking for Tree 80. Check the hostel lawn. Or don't. Your funeral! ⏰ HINT: Computers speak in 0s and 1s!"
+      ],
+      location: "TREE80",
+      chit: "ACC{3Y35}",
+      answer: "ACC{3Y35}",
+      decodedKey: "EYES",
+      timer: 900
     }
-  ]
+  },
+
+  // ROUND 2: Second location
+  round2: {
+    groupA: {
+      id: 2,
+      type: 'physical',
+      title: 'Round 2: Decode & Hunt',
+      // ATBASH CIPHER (A=Z, B=Y, etc.)
+      riddle: "R hgzmw yb z kozxv lu kizbvi zmw kvzxv, Dllw zmw tzohh rm jfrvg xivzhv. Mlg olxpvw grtsg, mlg ufoorb glim, Qfhg lmv hnzoo xizxp dsvih grnv szh dlim. Mvzi gsv xsfixs R hlugor dzrg — Z wlli rnkvuivxg, bvg hgroo z tzv.",
+      cipherType: "ATBASH",
+      hints: [
+        "Sharon Shaju (Creative Member) tried to document this door for Instagram. Caption: 'Broken but beautiful.' Sakshi Sonkul (PR Head) said 'That's not on-brand.' Door remains undocumented. Light Yagami is disappointed in both of them 🚪",
+        "Ria D'Costa scheduled a 'door repair committee meeting' here. Attendance: 0. The door is still broken. In Kabhi Khushi Kabhie Gham, they fixed family bonds. Can't fix a door though? 🎭",
+        "Ryuk once wrote in his death note: 'This door will be fixed.' Nothing happened. Turns out, doors don't have names. Who knew? Certainly not Yash Bodake (Creative Team) who suggested we 'rebrand' it instead 🔧 HINT: Mirror alphabet - A becomes Z!"
+      ],
+      location: "BROKENDOOR",
+      chit: "ACC{3RAS3D}",
+      answer: "ACC{3RAS3D}",
+      decodedKey: "ERASED",
+      timer: 900
+    },
+    groupB: {
+      id: 2,
+      type: 'physical',
+      title: 'Round 2: Decode & Hunt',
+      // HEXADECIMAL
+      riddle: "49 20 62 72 65 61 74 68 65 20 62 75 74 20 68 61 76 65 20 6e 6f 20 6c 75 6e 67 73 2c 0a 49 20 68 75 6d 20 74 68 6f 75 67 68 20 49 20 64 6f 6e 27 74 20 73 69 6e 67 2e 0a 48 75 67 67 69 6e 67 20 74 68 65 20 77 61 6c 6c 20 62 79 20 74 68 65 20 67 69 72 6c 73 27 20 77 61 79 20 69 6e 2c 0a 49 20 74 75 72 6e 20 68 6f 74 20 64 61 79 73 20 74 6f 20 73 70 72 69 6e 67 2e 0a 0a 46 6f 6c 6c 6f 77 20 74 68 65 20 6c 69 6e 65 20 6f 66 20 63 6f 6f 6c 69 6e 67 20 67 75 61 72 64 73 20 69 6e 20 61 20 72 6f 77 20 e2 80 94 0a 57 68 65 72 65 20 74 68 65 79 20 72 65 73 74 2c 20 79 6f 75 72 20 6e 65 78 74 20 63 6c 75 65 20 77 69 6c 6c 20 73 68 6f 77 2e",
+      cipherType: "HEXADECIMAL",
+      hints: [
+        "This AC unit was installed by Nishan Menezes (Treasurer). He said 'It's an investment in cool vibes.' Rajiv Agarwal (Finance Head) is still calculating the ROI. Rem from Death Note would've just destroyed it 💨",
+        "Advik Saxena (PR Member) posted about this AC on social media: '❄️ Staying Cool at ACC Events!' The AC wasn't even on. Samarthya Deore fact-checked it. Awkward. L approves of the fact-checking though! 🤔",
+        "In The Matrix, Neo chose the red pill. In Death Note, Light chose the death note. You? You chose to waste time looking at an AC unit. Riya Raju (Documentation Head) documented this moment. It's in the Hall of Shame 📝 HINT: Base 16 - numbers and A-F!"
+      ],
+      location: "GIRLSENTRANCEAC",
+      chit: "ACC{W0RLD}",
+      answer: "ACC{W0RLD}",
+      decodedKey: "WORLD",
+      timer: 900
+    },
+    groupC: {
+      id: 2,
+      type: 'physical',
+      title: 'Round 2: Decode & Hunt',
+      // VIGENERE CIPHER (Key: KIRA)
+      riddle: "S'q klyrx aii S wxerh pmoi e kyevh, Hviwwih mr wxsvmiw, rsx tesrx epsri. Xsrc hergxviw gmvgpi qc wost, Mr xvmfep xepiw ac evx mw wlsyr. Egvsww jvsq peww erh piexrmrk'w wmkr, Jmrh xli tmppev aliyi Evx pmriw wlmri.",
+      cipherKey: "KIRA",
+      cipherType: "VIGENERE",
+      hints: [
+        "Pratiksha Patil once gave a tech talk here. Topic: 'Why Warli Art is Basically HTML/CSS.' Everyone was confused. Even the pillar. Misa Amane said 'I don't get it but he's cute!' Wrong person, Misa! 🎨",
+        "Akshath Narvekar tried to scan this pillar for QR codes. Found none. Joel Bijo suggested 'Maybe it's AR?' It's not AR. It's just art. Batman investigated less. You're doing too much! 🤦‍♂️",
+        "Bollywood fact: No movie has ever featured Warli art prominently. Hollywood fact: Also no. Death Note fact: Warli art appears on page... never. This hint is useless. You're welcome! Cheryl Cardoza illustrated that perfectly 🖌️ HINT: The key is in Death Note's name!"
+      ],
+      location: "WARLI",
+      chit: "ACC{M3A5UR3}",
+      answer: "ACC{M3A5UR3}",
+      decodedKey: "MEASURE",
+      timer: 900
+    }
+  },
+
+  // ROUND 3: Third location (Final group round - combined phrases!)
+  round3: {
+    groupA: {
+      id: 3,
+      type: 'physical',
+      title: 'Round 3: Decode & Hunt',
+      // REVERSE + BASE64
+      riddle: "LnlhdyBlaHQgbm8gZXIndW95ICx1bGIgeXRwbWUgZWh0IGRuaUYg4oCUIHlhdHMgSSBldGlodyBuaSBkcmliIGxheW9yIGEgZWRpc2VCIC5sbGFtcyBkbmEgZG51b3IgZGBgUyBJIGxsaXRTIC5sbGFjIHMncmVtbWl3cyBvbiAsZXZhdyBvbiAsaHNhbHBzIG9OIC5uaWFtZXIgSSB5cmQgdGV5IGV1bGIgZGV0bmlhUCAubnphciBldmVuIHR1YiBla3MgZWh0IGRsb2ggSQ==",
+      cipherType: "REVERSE+BASE64",
+      hints: [
+        "This pool is faker than Ebadur Rehman's 'I'm almost done with the report' excuses. It's painted. Not real. Kareena Kapoor's character Poo would NOT approve. Near from Death Note calculated: Fakeness Level = 97.3% 💧",
+        "Alisha D'Cunha suggested filling it with real water. Ria D'Costa said 'Maybe next year.' It's been 3 years. The swan is still dry. In Titanic, Jack drowned. This pool? You couldn't drown if you tried! 🦢",
+        "Ryuk tried to write 'water pool' in his death note. Autocorrect changed it to 'what a fool.' He's talking about you. Justin Kunjumon designed a 'Save the Pool' campaign. Pool doesn't need saving. It's paint! 🎨💀 HINT: First decode Base64, then reverse the text!"
+      ],
+      location: "WATERPOOL",
+      chit: "ACC{Y0UR_T0M0RR0W}",
+      answer: "ACC{Y0UR_T0M0RR0W}",
+      decodedKey: "YOUR TOMORROW",
+      timer: 900
+    },
+    groupB: {
+      id: 3,
+      type: 'physical',
+      title: 'Round 3: Decode & Hunt',
+      // BACON CIPHER (Using A/B pattern)
+      riddle: "AABAA BAAABAAAABAAAA BAABB AABBB AABAA AABBB ABAAA BAAAB BAABA BAABAAABAA BAABA BAAAA BAAAB BAABB BAAAA ABBAB ABAAA AAAAA AAABB BAAAB ABBAB BAAAA BAABB ABBAB ABBBA ABAAA BABBA ABABB ABBBA BAAAA ABBAA AAABB ABBAA ABBBA BAAAA BAABB BAABB AABAA BAAAA ABBBB AABAA BABAA AAAAA BAAAB ABAAA ABBBA AABAA ABBBA BAABA BAAAB AAAAA AABBB ABBAB BABAA ABABA BAAAA ABBBB AABAA BABAA ABBAB ABAAA AAAAA ABBAA AABAA AAABB AABAA BAAAB",
+      cipherType: "BACON",
+      hints: [
+        "Yash Patil (Technical Member) was posted here for 'security.' He fell asleep in 10 minutes. The watchman woke him up. Ironic? Extremely. Light Yagami never slept on duty. Be like Light! 😴",
+        "Sharon Shaju took aesthetic photos of this cabin. Caption: 'Gateway to Dreams.' Advik Saxena commented: 'It's just a cabin bro.' Bollywood would make this a song sequence. Reality? It's just a cabin, bro! 🎶",
+        "The watchman once caught Samarthya Deore trying to sneak out early from an event. Samarthya claimed: 'Emergency PR call!' The watchman: 'I've heard that 47 times this month.' L would deduce: Lying probability = 99.9% 😎 HINT: Francis Bacon's cipher - 5 letters for each character!"
+      ],
+      location: "WATCHMANCABIN",
+      chit: "ACC{N33D5_CL3ANS1NG}",
+      answer: "ACC{N33D5_CL3ANS1NG}",
+      decodedKey: "NEEDS CLEANSING",
+      timer: 900
+    },
+    groupC: {
+      id: 3,
+      type: 'physical',
+      title: 'Round 3: Decode & Hunt',
+      // RAILFENCE CIPHER (3 rails)
+      riddle: "Seteiu  arnne,btfrnw u  es'faWiigfaetwadr Tdnlo leshr  er anb h rce ls orFn  t  y heforsln  wrigrdnh c r re,   .bh   slbhihh r c  r e.id siehpaurpateae  dfc sd h.ui u  h dfooehyehveo",
+      cipherType: "RAILFENCE",
+      rails: 3,
+      hints: [
+        "These pipes are redder than Rajiv Agarwal's budget spreadsheet when he sees expense reports. Nishan Menezes (Treasurer) suggested 'painting them gold for sponsorship.' Pipes declined. Rem finds this hilarious 💀",
+        "Joel Bijo tried to use these pipes as a makeshift server rack. Pratiksha Patil said 'That's not how tech works.' In Mario, pipes are portals. In reality? They're just pipes. Misa Amane is confused! 🔴",
+        "Fun fact: Salman Bhai's Being Human shirts have been redder. These pipes? Close second. Riya Raju documented: '17 ACC members walk past daily. 0 notice them.' Light Yagami noticed. You didn't. Skill issue! 🔧 HINT: Text written in zigzag pattern across 3 rails!"
+      ],
+      location: "REDPIPES",
+      chit: "ACC{Y0UR_L!F35PAN}",
+      answer: "ACC{Y0UR_L!F35PAN}",
+      decodedKey: "YOUR LIFESPAN",
+      timer: 900
+    }
+  },
+
+  // ROUND 4: Semi-Finals (Top 3 teams - all groups merged)
+  round4: {
+    id: 4,
+    type: 'physical',
+    title: 'Semi-Finals: The Crowned One',
+    // POLYBIUS SQUARE
+    riddle: "11 12421242 445211445 33154542 221315154543 54154445 5315114243 11 131242435433 42434351113 4233 2242114343 445234431524 424445 33154542 344244434443 143435333 5211231544154442 43454243151144 44421511143 52231542 33154311 241524231 121115111 4445244215143 4215143 11 434231331533445 112421332 5231154215 34454434311533444343 44421511143 12421333143 445231115 331542534445 111311511543 241324143 4523241324 1433 2445434 131534143115",
+    cipherType: "POLYBIUS",
+    hints: [
+      "This swan witnessed 47 ACC meetings. 43 started with 'Where's Ria?' The crown? A gift from Sakshi Sonkul's PR campaign. Nobody knows why. Bollywood would make this the climax. Death Note would make Kira reveal himself here. Reality? Just a statue! 👑",
+      "Yash Bodake designed the crown. Took 6 hours. Looks like it took 6 minutes. Akshath Narvekar coded a 'Find the Swan' app. It crashed. The swan remains elusive. Near says: Incompetence detected 🦢",
+      "In K3G, everyone gathered for the climax. Here? Only the swan showed up. Ebadur Rehman said he'd be there. He lied. Alisha and Cheryl came for photos, left in 2 minutes. Ryuk ate an apple and left. You're alone with the swan. Awkward! 🍎 HINT: Ancient Greek 5x5 grid cipher!"
+    ],
+    location: "SWANCROWN",
+    chit: "ACC{!I!A!M!}",
+    answer: "ACC{!I!A!M!}",
+    decodedKey: "I AM",
+    timer: 900
+  },
+
+  // ROUND 5: Grand Finale (Final 2 teams)
+  round5: {
+    id: 5,
+    type: 'physical',
+    title: 'Grand Finale: The Final Truth',
+    // COMBINATION: Caesar(7) + Reverse + Base64
+    riddle: "Lm5lZW5hIGRuYSBoaWxpIHRpIGtycmVuYyBJIGRseSBsbnRzIGkgdGRlYWYgLmhscyBlaHQgZ25paGNudSBsbm9wIGVodCBkbmlG4oCUIHlsdGVpcSBkZWhjaHN0cyBzbXJhIGxhdGVtIGh0aVcgLmVldGwgYSBla2lsIGRuYXRzIEkgbGxpdHMgLHRpdXJmIG9uIGxzZXZhZWwgb04gLm55cyBlaHQgZ25paGN1b3QgZW5pcHMgbmVkb293IEEgLGhnaWggdGkgeXJyYWMgSSB0ZXkgcmV3b3Agb24ga25pcmQgSQ==",
+    cipherType: "MULTI_LAYER",
+    cipherSteps: ["BASE64", "REVERSE", "CAESAR_7"],
+    hints: [
+      "FINAL HINT #1: This pole has more uptime than the ACC website (Akshath is crying). Nishan approved the budget to replace it. 3 years ago. Still standing. Like Light's ego! Also, SRK pointed here in DDLJ (citation needed) ⚡ HINT: Three layers deep!",
+      "FINAL HINT #2: Pratiksha once said 'Let's install sensors on this pole!' Yash Patil agreed. Nothing happened. Ria D'Costa said 'Great idea for next year!' (It's been 3 years). L calculates: Procrastination Level = Infinite 💡 HINT: Decode Base64 → Reverse → Caesar shift!",
+      "FINAL HINT #3: Congrats! You made it! You're better than 90% of participants. The other 10%? They asked Rajiv for sponsorship to skip rounds. He said no. Ryuk ate 47 apples watching this. Light became Kira wrote 1000 names. You? Still confused. Legend! 🎉💀 HINT: Final Caesar shift is 7!"
+    ],
+    location: "ELECTRICPOLE",
+    chit: "ACC{K!RA}",
+    answer: "ACC{K!RA}",
+    decodedKey: "KIRA",
+    timer: 900
+  }
 };
+
+// Cipher decoder helper functions
+const CIPHER_DECODERS = {
+  ROT13: (text) => {
+    return text.replace(/[a-zA-Z]/g, char => {
+      const start = char <= 'Z' ? 65 : 97;
+      return String.fromCharCode(((char.charCodeAt(0) - start + 13) % 26) + start);
+    });
+  },
+
+  MORSE: (morse) => {
+    const morseCode = {
+      '.-': 'A', '-...': 'B', '-.-.': 'C', '-..': 'D', '.': 'E',
+      '..-.': 'F', '--.': 'G', '....': 'H', '..': 'I', '.---': 'J',
+      '-.-': 'K', '.-..': 'L', '--': 'M', '-.': 'N', '---': 'O',
+      '.--.': 'P', '--.-': 'Q', '.-.': 'R', '...': 'S', '-': 'T',
+      '..-': 'U', '...-': 'V', '.--': 'W', '-..-': 'X', '-.--': 'Y',
+      '--..': 'Z', '/': ' '
+    };
+    return morse.split(' ').map(code => morseCode[code] || '').join('');
+  },
+
+  BINARY: (binary) => {
+    return binary.split(' ').map(bin => String.fromCharCode(parseInt(bin, 2))).join('');
+  },
+
+  HEXADECIMAL: (hex) => {
+    return hex.split(' ').map(h => String.fromCharCode(parseInt(h, 16))).join('');
+  },
+
+  ATBASH: (text) => {
+    return text.replace(/[a-zA-Z]/g, char => {
+      const isUpper = char === char.toUpperCase();
+      const start = isUpper ? 65 : 97;
+      return String.fromCharCode(25 - (char.charCodeAt(0) - start) + start);
+    });
+  },
+
+  VIGENERE: (text, key) => {
+    // Vigenere decode implementation
+    let result = '';
+    let keyIndex = 0;
+    for (let i = 0; i < text.length; i++) {
+      const char = text[i];
+      if (/[a-zA-Z]/.test(char)) {
+        const isUpper = char === char.toUpperCase();
+        const charCode = char.charCodeAt(0) - (isUpper ? 65 : 97);
+        const keyChar = key[keyIndex % key.length].toUpperCase();
+        const keyCode = keyChar.charCodeAt(0) - 65;
+        const decoded = (charCode - keyCode + 26) % 26;
+        result += String.fromCharCode(decoded + (isUpper ? 65 : 97));
+        keyIndex++;
+      } else {
+        result += char;
+      }
+    }
+    return result;
+  }
+};
+
+
 
 // Components
-const GlitchText = ({ text, className = "" }: { text: string; className?: string }) => (
-  <div className={`relative inline-block ${className}`}>
-    <span className="relative z-10">{text}</span>
-  </div>
-);
+const GlitchText = ({ text, className = "" }: { text: string; className?: string }) => {
+  return (
+    <h1 className={`relative inline-block ${className}`}>
+      <span className="relative z-10">{text}</span>
+      <span className="absolute top-0 left-0 -ml-0.5 -mt-0.5 text-red-500 opacity-70 animate-pulse">{text}</span>
+      <span className="absolute top-0 left-0 ml-0.5 mt-0.5 text-cyan-500 opacity-70 animate-pulse">{text}</span>
+    </h1>
+  );
+};
 
 const CharacterCard = ({ image, name, description, icon: Icon }: { image?: string; name: string; description: string; icon?: React.ElementType }) => (
-  <div className="group relative overflow-hidden rounded-lg shadow-2xl h-80 bg-gradient-to-b from-gray-900 to-black border border-red-900/30 hover:border-red-600 transition-all duration-300 hover:shadow-red-900/50">
-    <div className="absolute inset-0">
-      <img
-        src={image || "/placeholder.svg"}
-        alt={name}
-        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-      />
-      <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent group-hover:from-red-900/40"></div>
-    </div>
-    <div className="absolute inset-0 flex flex-col justify-end p-4 text-white">
-      <div className="flex items-center gap-2 mb-2">
-        {Icon && <Icon className="w-5 h-5 text-red-500" />}
-        <h3 className="text-xl font-bold">{name}</h3>
+  <div className="bg-gradient-to-br from-gray-900 to-black border border-gray-800 rounded-lg p-6 hover:border-red-900 transition-all hover:shadow-[0_0_20px_rgba(239,68,68,0.3)] group">
+    <div className="flex items-center space-x-4">
+      {/* Priority: Show image if provided, otherwise fallback to Icon */}
+      {image ? (
+        <div className="relative shrink-0">
+          <div className="absolute inset-0 bg-red-600 blur-md opacity-20 group-hover:opacity-50 transition-opacity"></div>
+          <img
+            src={image}
+            alt={name}
+            className="relative w-16 h-16 rounded-full object-cover border-2 border-red-600"
+          />
+        </div>
+      ) : (
+        Icon && (
+          <div className="w-16 h-16 rounded-full bg-red-950/50 border-2 border-red-600 flex items-center justify-center shrink-0">
+            <Icon className="w-8 h-8 text-red-500" />
+          </div>
+        )
+      )}
+      <div className="min-w-0">
+        <h3 className="text-xl font-bold text-white group-hover:text-red-500 transition truncate">{name}</h3>
+        <p className="text-gray-400 text-sm truncate">{description}</p>
       </div>
-      <p className="text-sm text-gray-300 opacity-0 group-hover:opacity-100 transition-opacity duration-300">{description}</p>
     </div>
   </div>
 );
@@ -296,634 +399,963 @@ export default function App() {
   const [teamName, setTeamName] = useState('');
   const [teamId, setTeamId] = useState('');
   const [round, setRound] = useState(1);
-  const [phase, setPhase] = useState(1);
   const [group, setGroup] = useState('');
-  const [stageIndex, setStageIndex] = useState(0);
-  const [inputAnswer, setInputAnswer] = useState('');
-  const [errorMsg, setErrorMsg] = useState('');
-  const [logs, setLogs] = useState<string[]>([]);
+  const [puzzleIndex, setPuzzleIndex] = useState(0);
+  const [answer, setAnswer] = useState('');
+  const [wrongAnswer, setWrongAnswer] = useState(false);
+  const [score, setScore] = useState(0);
+  const [screenGlitch, setScreenGlitch] = useState(false); // For wrong answer glitch effect
+  const [timeLeft, setTimeLeft] = useState(900); // 15 minutes timer
+  const [isDisqualified, setIsDisqualified] = useState(false);
+  const [readyForRound, setReadyForRound] = useState(true); // true for first round
+  const [showHint, setShowHint] = useState(false); // For super misleading hints
+  const [currentHintIndex, setCurrentHintIndex] = useState(0); // Track which hint is shown
 
-  const addLog = (msg: string) => {
-    const timestamp = new Date().toLocaleTimeString();
-    setLogs(prev => [`[${timestamp}] ${msg}`, ...prev]);
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setGameState('intro');
+    }, 1000);
+    return () => clearTimeout(timer);
+  }, []);
+
+  // Timer countdown effect - runs when playing
+  useEffect(() => {
+    if (gameState !== 'playing') return;
+
+    if (timeLeft <= 0) {
+      // TIME'S UP - DISQUALIFIED!
+      setIsDisqualified(true);
+      setTimeout(() => {
+        setGameState('disqualified');
+      }, 3000); // Show red flash for 3 seconds
+      return;
+    }
+
+    const timer = setInterval(() => {
+      setTimeLeft(prev => prev - 1);
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [gameState, timeLeft]);
+
+  // Three.js Background Setup (only runs when on home screen)
+  useEffect(() => {
+    if (gameState !== 'home') return;
+
+    const canvas = document.getElementById('three-canvas') as HTMLCanvasElement;
+    if (!canvas) return;
+
+    // Dynamically import Three.js to avoid SSR issues
+    import('three').then((THREE) => {
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+      const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      camera.position.z = 50;
+
+      // Create floating geometric shapes
+      const geometries = [
+        new THREE.OctahedronGeometry(1.5),
+        new THREE.TetrahedronGeometry(1.2),
+        new THREE.IcosahedronGeometry(1),
+        new THREE.BoxGeometry(1.5, 1.5, 1.5),
+      ];
+
+      const material = new THREE.MeshPhongMaterial({
+        color: 0xdc2626,
+        emissive: 0x7f1d1d,
+        shininess: 100,
+        transparent: true,
+        opacity: 0.6,
+        wireframe: true
+      });
+
+      const shapes: THREE.Mesh[] = [];
+      for (let i = 0; i < 15; i++) {
+        const geometry = geometries[Math.floor(Math.random() * geometries.length)];
+        const mesh = new THREE.Mesh(geometry, material);
+
+        mesh.position.x = (Math.random() - 0.5) * 100;
+        mesh.position.y = (Math.random() - 0.5) * 100;
+        mesh.position.z = (Math.random() - 0.5) * 100;
+
+        mesh.rotation.x = Math.random() * Math.PI;
+        mesh.rotation.y = Math.random() * Math.PI;
+
+        mesh.userData = {
+          speedX: (Math.random() - 0.5) * 0.002,
+          speedY: (Math.random() - 0.5) * 0.002,
+          rotationSpeed: (Math.random() - 0.5) * 0.01
+        };
+
+        scene.add(mesh);
+        shapes.push(mesh);
+      }
+
+      // Particle system
+      const particleGeometry = new THREE.BufferGeometry();
+      const particleCount = 200;
+      const positions = new Float32Array(particleCount * 3);
+
+      for (let i = 0; i < particleCount * 3; i++) {
+        positions[i] = (Math.random() - 0.5) * 200;
+      }
+
+      particleGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+      const particleMaterial = new THREE.PointsMaterial({
+        color: 0xff0000,
+        size: 0.5,
+        transparent: true,
+        opacity: 0.6,
+        blending: THREE.AdditiveBlending
+      });
+
+      const particles = new THREE.Points(particleGeometry, particleMaterial);
+      scene.add(particles);
+
+      // Lighting
+      const ambientLight = new THREE.AmbientLight(0x404040, 1);
+      scene.add(ambientLight);
+
+      const pointLight = new THREE.PointLight(0xff0000, 2, 100);
+      pointLight.position.set(0, 0, 30);
+      scene.add(pointLight);
+
+      const pointLight2 = new THREE.PointLight(0xdc2626, 1.5, 100);
+      pointLight2.position.set(-30, 20, 20);
+      scene.add(pointLight2);
+
+      // Animation loop
+      let mouseX = 0;
+      let mouseY = 0;
+      let animationId: number;
+
+      const onMouseMove = (event: MouseEvent) => {
+        mouseX = (event.clientX / window.innerWidth) * 2 - 1;
+        mouseY = -(event.clientY / window.innerHeight) * 2 + 1;
+      };
+      window.addEventListener('mousemove', onMouseMove);
+
+      const animate = () => {
+        animationId = requestAnimationFrame(animate);
+
+        // Rotate and move shapes
+        shapes.forEach(shape => {
+          shape.rotation.x += shape.userData.rotationSpeed;
+          shape.rotation.y += shape.userData.rotationSpeed * 0.7;
+
+          shape.position.x += shape.userData.speedX;
+          shape.position.y += shape.userData.speedY;
+
+          if (Math.abs(shape.position.x) > 50) shape.userData.speedX *= -1;
+          if (Math.abs(shape.position.y) > 50) shape.userData.speedY *= -1;
+        });
+
+        // Rotate particle system
+        particles.rotation.y += 0.0005;
+        particles.rotation.x += 0.0002;
+
+        // Camera parallax with mouse
+        camera.position.x += (mouseX * 5 - camera.position.x) * 0.05;
+        camera.position.y += (mouseY * 5 - camera.position.y) * 0.05;
+        camera.lookAt(scene.position);
+
+        renderer.render(scene, camera);
+      };
+      animate();
+
+      // Handle resize
+      const handleResize = () => {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+      };
+      window.addEventListener('resize', handleResize);
+
+      // Cleanup function
+      return () => {
+        window.removeEventListener('mousemove', onMouseMove);
+        window.removeEventListener('resize', handleResize);
+        cancelAnimationFrame(animationId);
+        renderer.dispose();
+        scene.clear();
+      };
+    }).catch(err => {
+      console.error('Three.js failed to load:', err);
+    });
+  }, [gameState]);
+
+  const playIntroVideo = () => {
+    if (videoRef.current) {
+      setVideoStarted(true);
+      videoRef.current.play().catch(err => {
+        console.error('Video autoplay failed:', err);
+        setGameState('home');
+      });
+    }
   };
 
-  const handleVideoStart = () => {
+  const skipIntro = () => {
     if (videoRef.current) {
-      videoRef.current.play();
-      setVideoStarted(true);
+      videoRef.current.pause();
     }
+    setGameState('home');
   };
 
   const handleVideoEnd = () => {
-    // Start fade out transition
-    setIsTransitioning(true);
-    // After fade out completes, move to intro screen
-    setTimeout(() => {
-      setGameState('intro');
-      setIsTransitioning(false);
-    }, 800); // Match this with CSS transition duration
+    setGameState('home');
   };
 
-  const handleLogin = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!teamName || !teamId) return;
+  const handleStart = () => {
+    if (!teamName.trim() || !teamId.trim()) {
+      alert('Please enter both team name and team ID!');
+      return;
+    }
 
-    // Determine group based on Team ID
-    let numGroups = 5; // Default for Round 1
-    if (round === 2) numGroups = 3;
-    if (round === 3) numGroups = 1;
+    const id = parseInt(teamId);
+    if (isNaN(id) || id < 1 || id > 15) {
+      alert('Team ID must be between 1 and 15!');
+      return;
+    }
 
-    const assignedGroup = getGroupFromTeamId(teamId, numGroups);
+    const assignedGroup = getGroupFromTeamId(id);
+    if (assignedGroup === 'INVALID') {
+      alert('Invalid Team ID!');
+      return;
+    }
+
     setGroup(assignedGroup);
-
-    addLog(`Team ${teamName} (ID: ${teamId}) authenticated.`);
-    addLog(`Assigned to Group ${assignedGroup}.`);
-    addLog(`Round ${round} Phase ${phase} - STARTING.`);
     setGameState('playing');
   };
 
-  const getGameDataForCurrentPhase = (): any[] => {
-    const groupKey = `group${group}`;
-    if (round === 1 && phase === 1) return (GAME_DATA.round1Phase1 as any)[groupKey] || [];
-    if (round === 1 && phase === 2) return (GAME_DATA.round1Phase2 as any)[groupKey] || [];
-    if (round === 2 && phase === 1) return (GAME_DATA.round2Phase1 as any)[groupKey] || [];
-    if (round === 2 && phase === 2) return (GAME_DATA.round2Phase2 as any)[groupKey] || [];
-    if (round === 3) return GAME_DATA.round3 || [];
-    return [];
+  const getCurrentPuzzle = () => {
+    if (round <= 3) {
+      // Group-specific rounds
+      const roundKey = `round${round}` as keyof typeof GAME_DATA;
+      const groupKey = `group${group}` as keyof typeof GAME_DATA[typeof roundKey];
+      return GAME_DATA[roundKey]?.[groupKey];
+    } else if (round === 4) {
+      return GAME_DATA.round4;
+    } else if (round === 5) {
+      return GAME_DATA.round5;
+    }
+    return null;
   };
 
-  const currentClue = getGameDataForCurrentPhase()[stageIndex];
+  const handleSubmitAnswer = () => {
+    const puzzle = getCurrentPuzzle();
+    if (!puzzle) return;
 
-  const handleSubmitAnswer = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!inputAnswer) return;
+    if (answer.trim().toUpperCase() === puzzle.answer.toUpperCase()) {
+      setWrongAnswer(false);
+      setScore(score + 100);
+      setAnswer('');
+      setShowHint(false); // Hide hint for next round
+      setCurrentHintIndex(0); // Reset to first hint
 
-    const normalizedInput = inputAnswer.trim().toLowerCase().replace(/\s/g, '');
-    const normalizedSolution = currentClue.answer.toLowerCase().replace(/\s/g, '');
-
-    if (normalizedInput === normalizedSolution) {
-      addLog(`Correct: ${currentClue.answer}`);
-      setInputAnswer('');
-      setErrorMsg('');
-
-      const gameData = getGameDataForCurrentPhase();
-
-      if (stageIndex + 1 < gameData.length) {
-        setStageIndex(prev => prev + 1);
+      // Progress to next round
+      if (round < 5) {
+        setIsTransitioning(true);
+        setTimeout(() => {
+          setRound(round + 1);
+          setTimeLeft(900); // Reset timer for new round
+          setReadyForRound(false); // Show "Start Round" button
+          setIsTransitioning(false);
+        }, 2000);
       } else {
-        // Phase/Round complete
-        if (round === 1 && phase === 1) {
-          setGameState('advancement');
-        } else if (round === 1 && phase === 2) {
-          setGameState('advancement');
-        } else if (round === 2 && phase === 1) {
-          setGameState('advancement');
-        } else if (round === 2 && phase === 2) {
-          setGameState('advancement');
-        } else if (round === 3) {
-          setGameState('victory');
-        }
+        setGameState('victory');
       }
     } else {
-      setErrorMsg("ACCESS DENIED. INCORRECT KEY.");
-      addLog(`Failed: ${inputAnswer}`);
+      setWrongAnswer(true);
+      setScreenGlitch(true); // Trigger glitch effect
+      setTimeout(() => {
+        setWrongAnswer(false);
+        setScreenGlitch(false);
+      }, 2000);
     }
   };
 
-  const proceedToNextPhase = () => {
-    if (round === 1 && phase === 1) {
-      setPhase(2);
-      setStageIndex(0);
-      setGameState('playing');
-    } else if (round === 1 && phase === 2) {
-      setRound(2);
-      setPhase(1);
-      setStageIndex(0);
-      setGameState('playing');
-    } else if (round === 2 && phase === 1) {
-      setPhase(2);
-      setStageIndex(0);
-      setGameState('playing');
-    } else if (round === 2 && phase === 2) {
-      setRound(3);
-      setPhase(1);
-      setStageIndex(0);
-      setGameState('playing');
-    }
-  };
-
-  // Skip handler - only works when video is playing
-  useEffect(() => {
-    const handleSkip = (e: KeyboardEvent | MouseEvent) => {
-      // Only allow skip if video has started and we're still in loading state
-      if (gameState === 'loading' && videoStarted && ((e as KeyboardEvent).code === 'Space' || e.type === 'click')) {
-        handleVideoEnd();
-      }
-    };
-
-    if (gameState === 'loading' && videoStarted) {
-      window.addEventListener('keydown', handleSkip);
-      document.addEventListener('click', handleSkip);
-
-      return () => {
-        window.removeEventListener('keydown', handleSkip);
-        document.removeEventListener('click', handleSkip);
-      };
-    }
-  }, [gameState, videoStarted]);
-
-  // --- Loading Screen with Video ---
+  // Loading State
   if (gameState === 'loading') {
     return (
-      <div
-        className={`min-h-screen bg-black text-white flex flex-col items-center justify-center relative overflow-hidden transition-opacity duration-800 cursor-pointer ${isTransitioning ? 'opacity-0' : 'opacity-100'}`}
-        onClick={!videoStarted ? handleVideoStart : undefined}
-      >
-        {/* Video Background - initially hidden behind black screen */}
-        <video
-          ref={videoRef}
-          className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ${videoStarted ? 'opacity-100' : 'opacity-0'}`}
-          onEnded={handleVideoEnd}
-          playsInline
-          preload="auto"
-        >
-          <source src="/intro.mp4" type="video/mp4" />
-          Your browser does not support the video tag.
-        </video>
-
-        {/* Simple black screen with "click here" - shown before video starts */}
-        {!videoStarted && (
-          <div className="relative z-20 flex flex-col items-center justify-center text-center pointer-events-none">
-            <div className="space-y-6 animate-pulse">
-              <p className="text-2xl md:text-3xl text-gray-400 font-light tracking-wide">
-                Click anywhere to start
-              </p>
-              <div className="w-16 h-16 mx-auto border-2 border-gray-600 rounded-full flex items-center justify-center hover:border-red-600 transition-colors duration-300">
-                <div className="w-3 h-3 bg-gray-600 rounded-full"></div>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Skip instruction - shown when video is playing */}
-        {videoStarted && (
-          <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-20 animate-fade-in">
-            <div className="flex flex-col items-center gap-2 px-6 py-3 bg-black/60 backdrop-blur-md rounded-lg border border-gray-600">
-              <p className="text-gray-300 text-sm font-mono flex items-center gap-2">
-                <Zap className="w-4 h-4 text-yellow-400 animate-pulse" />
-                Press <span className="px-2 py-0.5 bg-gray-700 rounded font-bold text-yellow-400">SPACE</span> or <span className="px-2 py-0.5 bg-gray-700 rounded font-bold text-yellow-400">CLICK</span> to skip
-              </p>
-            </div>
-          </div>
-        )}
-
-        {/* Audio Element - keep the Death Note theme */}
-        <audio
-          ref={audioRef}
-          loop
-          className="hidden"
-          onPlay={() => console.log("[v0] Death Note theme playing")}
-        >
-          <source src="/deathnote-theme.mp3" type="audio/mpeg" />
-        </audio>
+      <div className="min-h-screen bg-black flex items-center justify-center">
+        <div className="text-center space-y-6">
+          <Skull className="w-24 h-24 text-red-600 mx-auto animate-pulse" />
+          <div className="text-2xl text-white font-bold animate-pulse">Loading...</div>
+        </div>
       </div>
     );
   }
 
-  // --- Intro Screen ---
+  // Intro Video
   if (gameState === 'intro') {
     return (
-      <div className="min-h-screen bg-black text-white overflow-hidden relative">
-        {/* Aceternity UI Dot Matrix Background */}
-        <div className="absolute inset-0 bg-black bg-dot-white/[0.2]">
-          {/* Radial gradient overlay for the fade effect */}
-          <div className="absolute pointer-events-none inset-0 flex items-center justify-center bg-black [mask-image:radial-gradient(ellipse_at_center,transparent_20%,black)]"></div>
-        </div>
-
-        {/* Dramatic gradient background with Death Note colors */}
-        <div className="absolute inset-0 bg-gradient-to-br from-black via-red-950/20 to-black"></div>
-        <div className="absolute inset-0 bg-gradient-to-tr from-black via-gray-950 to-red-950/30"></div>
-
-        {/* Animated red glow orbs */}
-        <div className="fixed inset-0 opacity-40 pointer-events-none">
-          <div className="absolute top-20 right-20 w-96 h-96 bg-red-900 rounded-full mix-blend-multiply filter blur-3xl animate-pulse"></div>
-          <div className="absolute bottom-20 left-20 w-96 h-96 bg-red-950 rounded-full mix-blend-multiply filter blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
-          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-red-900/30 rounded-full mix-blend-multiply filter blur-3xl animate-pulse" style={{ animationDelay: '0.5s' }}></div>
-        </div>
-
-        {/* Floating particles effect */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          {[...Array(15)].map((_, i) => (
-            <div
-              key={i}
-              className="absolute w-1 h-1 bg-red-500/30 rounded-full animate-float"
-              style={{
-                left: `${Math.random() * 100}%`,
-                top: `${Math.random() * 100}%`,
-                animationDelay: `${Math.random() * 5}s`,
-                animationDuration: `${10 + Math.random() * 10}s`
-              }}
-            ></div>
-          ))}
-        </div>
-
-        {/* Vignette effect */}
-        <div className="absolute inset-0 bg-gradient-radial from-transparent via-transparent to-black/60 pointer-events-none"></div>
-
-        <div className="relative z-10 min-h-screen flex flex-col items-center justify-center p-8 py-16">
-          <div className="max-w-5xl w-full text-center space-y-16 animate-fade-in">
-
-            {/* Top Section - Small branding */}
-            <div className="space-y-3">
-              <p className="text-sm md:text-base text-red-500 font-mono tracking-widest uppercase">Agnel Cyber Cell Presents</p>
-            </div>
-
-            {/* Center Hero Section - Main focus with enhanced CTF Championship */}
-            <div className="space-y-8">
-              <Skull className="w-24 h-24 mx-auto text-red-600 animate-pulse drop-shadow-2xl" />
-
-              <h1 className="text-6xl md:text-7xl lg:text-8xl font-black tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-red-600 to-red-900" style={{ fontFamily: '"Old English Text MT", serif' }}>
-                <GlitchText text="DEATH NOTE TOURNAMENT" />
-              </h1>
-
-              <div className="space-y-6">
-                {/* Enhanced CTF Championship with glow */}
-                <h2 className="text-5xl md:text-6xl lg:text-7xl font-black text-yellow-400 drop-shadow-[0_0_30px_rgba(251,191,36,0.5)] animate-pulse tracking-wider">
-                  <span className="inline-block bg-gradient-to-r from-yellow-400 via-red-500 to-yellow-400 text-transparent bg-clip-text drop-shadow-2xl">
-                    CTF CHAMPIONSHIP
-                  </span>
-                </h2>
-
-                <div className="text-4xl md:text-5xl font-bold text-red-500 drop-shadow-[0_0_20px_rgba(239,68,68,0.7)]">
-                  2025
-                </div>
-
-                <p className="text-xl md:text-2xl text-gray-300 font-light leading-relaxed max-w-2xl mx-auto mt-6">
-                  25 Teams. 3 Rounds. 1 Death Note.
-                  <br />
-                  <span className="text-red-500 font-semibold text-2xl md:text-3xl">Find it before your rivals do.</span>
-                </p>
-              </div>
-            </div>
-
-            {/* Character Images Grid */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto">
-              <img src="/deathnote-notebook.jpg" alt="Death Note" className="w-full h-40 object-cover rounded-lg border-2 border-red-600 shadow-lg shadow-red-900/50 hover:scale-105 transition-transform duration-300" />
-              <img src="/ryuk-shinigami.jpg" alt="Ryuk" className="w-full h-40 object-cover rounded-lg border-2 border-red-600 shadow-lg shadow-red-900/50 hover:scale-105 transition-transform duration-300" />
-              <img src="/kira-face.jpg" alt="Kira" className="w-full h-40 object-cover rounded-lg border-2 border-red-600 shadow-lg shadow-red-900/50 hover:scale-105 transition-transform duration-300" />
-              <img src="/l-detective.jpg" alt="L" className="w-full h-40 object-cover rounded-lg border-2 border-red-600 shadow-lg shadow-red-900/50 hover:scale-105 transition-transform duration-300" />
-            </div>
-
-            {/* Stats Grid - Better spacing */}
-            <div className="grid md:grid-cols-3 gap-6 max-w-3xl mx-auto px-4">
-              <div className="p-8 bg-gray-900/50 border border-gray-700 rounded-lg backdrop-blur-sm hover:border-red-600 transition-colors">
-                <Users className="w-10 h-10 text-red-500 mx-auto mb-4" />
-                <h3 className="font-bold text-xl mb-2">25 Teams</h3>
-                <p className="text-sm text-gray-400">Tournament Format</p>
-              </div>
-              <div className="p-8 bg-gray-900/50 border border-gray-700 rounded-lg backdrop-blur-sm hover:border-red-600 transition-colors">
-                <Trophy className="w-10 h-10 text-red-500 mx-auto mb-4" />
-                <h3 className="font-bold text-xl mb-2">Multi-Round</h3>
-                <p className="text-sm text-gray-400">Eliminations</p>
-              </div>
-              <div className="p-8 bg-gray-900/50 border border-gray-700 rounded-lg backdrop-blur-sm hover:border-red-600 transition-colors">
-                <Clock className="w-10 h-10 text-red-500 mx-auto mb-4" />
-                <h3 className="font-bold text-xl mb-2">High Stakes</h3>
-                <p className="text-sm text-gray-400">Every Minute Counts</p>
-              </div>
-            </div>
-
-            {/* CTA Button */}
-            <div className="space-y-6">
-              <button
-                onClick={() => setGameState('login')}
-                className="px-16 py-5 bg-gradient-to-r from-red-600 to-red-800 text-white font-bold text-xl hover:from-red-700 hover:to-red-900 transition-all duration-300 rounded-lg tracking-widest uppercase shadow-lg shadow-red-900/50 hover:shadow-red-600/70 transform hover:scale-105"
-              >
-                Enter The Tournament
-              </button>
-
-              <p className="text-xs text-gray-600 font-mono">
-                AGNEL CYBER CELL CTF CHAMPIONSHIP • {new Date().getFullYear()}
-              </p>
-            </div>
-          </div>
-        </div>
+      <div className="fixed inset-0 bg-black z-50">
+        <video
+          ref={videoRef}
+          src="/intro.mp4"
+          className="w-full h-full object-cover"
+          onEnded={handleVideoEnd}
+          onLoadedData={() => !videoStarted && playIntroVideo()}
+          playsInline
+          muted
+        />
+        <button
+          onClick={skipIntro}
+          className="absolute bottom-8 right-8 px-6 py-2 bg-red-600 hover:bg-red-700 text-white font-bold rounded-lg transition"
+        >
+          Skip Intro
+        </button>
       </div>
     );
   }
 
-  // --- Login Screen ---
-  if (gameState === 'login') {
+  // Home Screen
+  if (gameState === 'home') {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-black via-gray-950 to-black text-gray-300 flex items-center justify-center p-4 relative overflow-hidden">
-        <div className="absolute inset-0 opacity-20 pointer-events-none">
-          <div className="absolute top-1/4 right-1/4 w-80 h-80 bg-red-900 rounded-full mix-blend-multiply filter blur-3xl animate-pulse"></div>
+      <div className="min-h-screen bg-[#050505] text-white relative overflow-x-hidden selection:bg-red-600/30">
+
+        {/* Three.js Canvas */}
+        <canvas id="three-canvas" className="fixed inset-0 pointer-events-none opacity-40 z-0" />
+
+        {/* Cinematic Background Layer */}
+        <div className="fixed inset-0 pointer-events-none z-[1]">
+          {/* Animated Red Orbs */}
+          <div className="absolute top-20 left-[10%] w-96 h-96 bg-red-600/20 rounded-full blur-[120px] animate-pulse" />
+          <div className="absolute bottom-20 right-[10%] w-80 h-80 bg-red-700/15 rounded-full blur-[100px] animate-pulse" style={{ animationDelay: '1s' }} />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-red-600/10 rounded-full blur-[150px] animate-pulse" style={{ animationDelay: '2s' }} />
+
+          {/* DNA Helix Effect - Vertical Lines */}
+          <svg className="absolute inset-0 w-full h-full opacity-5" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="helix-gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" style={{ stopColor: '#dc2626', stopOpacity: 0 }} />
+                <stop offset="50%" style={{ stopColor: '#dc2626', stopOpacity: 1 }} />
+                <stop offset="100%" style={{ stopColor: '#dc2626', stopOpacity: 0 }} />
+              </linearGradient>
+            </defs>
+            {[...Array(8)].map((_, i) => (
+              <line
+                key={i}
+                x1={`${(i + 1) * 12.5}%`}
+                y1="0"
+                x2={`${(i + 1) * 12.5}%`}
+                y2="100%"
+                stroke="url(#helix-gradient)"
+                strokeWidth="2"
+                className="animate-pulse"
+                style={{ animationDelay: `${i * 0.2}s` }}
+              />
+            ))}
+          </svg>
+
+          {/* Matrix Rain Effect */}
+          <div className="absolute inset-0 overflow-hidden opacity-10">
+            {[...Array(15)].map((_, i) => (
+              <div
+                key={i}
+                className="absolute text-red-600 font-mono text-xs animate-matrix-rain"
+                style={{
+                  left: `${i * 6.67}%`,
+                  animationDelay: `${Math.random() * 3}s`,
+                  animationDuration: `${8 + Math.random() * 4}s`
+                }}
+              >
+                {Array.from({ length: 20 }, () =>
+                  String.fromCharCode(0x30A0 + Math.random() * 96)
+                ).join('\n')}
+              </div>
+            ))}
+          </div>
+
+          {/* Subtle Vignette */}
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_transparent_0%,_black_90%)] z-20" />
+
+          {/* Animated Grid System */}
+          <div
+            className="absolute inset-0 opacity-[0.03] animate-[grid-shift_20s_linear_infinite]"
+            style={{
+              backgroundImage: 'linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)',
+              backgroundSize: '50px 50px'
+            }}
+          />
+
+          {/* Floating Particles */}
+          <div className="absolute inset-0 overflow-hidden">
+            {[...Array(20)].map((_, i) => (
+              <div
+                key={i}
+                className="absolute w-1 h-1 bg-red-500/30 rounded-full animate-float"
+                style={{
+                  left: `${Math.random() * 100}%`,
+                  top: `${Math.random() * 100}%`,
+                  animationDelay: `${Math.random() * 5}s`,
+                  animationDuration: `${15 + Math.random() * 10}s`
+                }}
+              />
+            ))}
+          </div>
+
+          {/* CRT Scanline Effect */}
+          <div className="absolute inset-0 bg-[linear-gradient(rgba(18,16,16,0)_50%,_rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] z-30 bg-[length:100%_2px,3px_100%] pointer-events-none opacity-20" />
         </div>
 
-        <div className="w-full max-w-2xl relative z-10">
-          <div className="grid md:grid-cols-2 gap-8 items-center">
-            <div className="hidden md:block">
-              <div className="space-y-4">
-                <img src="/l-detective.jpg" alt="L Detective" className="w-full rounded-lg border-2 border-red-600 shadow-lg shadow-red-900/50 mb-4" />
-                <div className="bg-gray-900/50 border border-gray-700 rounded-lg p-4 backdrop-blur-sm">
-                  <p className="text-sm text-gray-400 italic">&quot;May the best team win.&quot;</p>
-                </div>
-              </div>
+        {/* Add these keyframes to your global CSS or in a <style> tag */}
+        <style jsx>{`
+        @keyframes grid-shift {
+          0% { background-position: 0 0; }
+          100% { background-position: 50px 50px; }
+        }
+        @keyframes float {
+          0%, 100% { transform: translateY(0) translateX(0); opacity: 0; }
+          10% { opacity: 0.3; }
+          50% { transform: translateY(-100vh) translateX(20px); opacity: 0.1; }
+          90% { opacity: 0.3; }
+        }
+        @keyframes matrix-rain {
+          0% { 
+            transform: translateY(-100%); 
+            opacity: 0;
+          }
+          10% { opacity: 1; }
+          90% { opacity: 1; }
+          100% { 
+            transform: translateY(100vh); 
+            opacity: 0;
+          }
+        }
+        .animate-matrix-rain {
+          animation: matrix-rain linear infinite;
+          white-space: pre;
+          line-height: 1.2;
+        }
+      `}</style>
+
+        <div className="relative z-20 container mx-auto px-4 py-8 md:py-16 flex flex-col items-center max-w-7xl">
+
+          {/* Header / Hero */}
+          <header className="text-center mb-20">
+            <div className="inline-block relative mb-6">
+              <div className="absolute inset-0 bg-red-600 blur-3xl opacity-20 animate-pulse" />
+              <Skull className="w-16 h-16 md:w-20 md:h-20 text-red-600 relative z-10 drop-shadow-[0_0_15px_rgba(220,38,38,0.5)]" />
             </div>
 
-            <div className="bg-gradient-to-br from-gray-900 via-gray-950 to-black border-2 border-red-900/50 p-8 rounded-xl shadow-2xl shadow-red-900/30">
-              <div className="flex justify-center mb-6">
-                <div className="p-3 bg-red-900/20 rounded-lg border border-red-600">
-                  <Terminal className="w-8 h-8 text-red-600" />
+            <div className="relative">
+              <GlitchText
+                text="CIPHER TRAIL"
+                className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-[8rem] font-black tracking-tight leading-none text-red-600 whitespace-nowrap"
+                style={{
+                  textShadow: '0 0 40px rgba(220, 38, 38, 0.6), 0 0 80px rgba(220, 38, 38, 0.3), 0 10px 30px rgba(0, 0, 0, 0.8)',
+                  filter: 'drop-shadow(0 0 2px rgba(220, 38, 38, 0.8))'
+                }}
+              />
+              {/* Subtle red underline accent */}
+              <div className="h-1 w-32 md:w-48 mx-auto mt-4 bg-gradient-to-r from-transparent via-red-600 to-transparent opacity-60 rounded-full" />
+            </div>
+
+            <div className="flex items-center justify-center gap-3 sm:gap-4 mt-6">
+              <div className="h-[2px] w-12 sm:w-16 bg-gradient-to-r from-transparent via-red-600/50 to-red-600" />
+              <p className="text-xs sm:text-sm md:text-base text-red-500 font-mono font-bold tracking-[0.3em] sm:tracking-[0.4em] uppercase drop-shadow-[0_0_10px_rgba(239,68,68,0.5)] whitespace-nowrap">
+                Death Note Edition
+              </p>
+              <div className="h-[2px] w-12 sm:w-16 bg-gradient-to-l from-transparent via-red-600/50 to-red-600" />
+            </div>
+
+            <p className="mt-8 text-neutral-500 text-xs md:text-sm tracking-[0.6em] font-medium opacity-60 uppercase">
+              Agnel Cyber Cell &bull; Securing the Digital Realm
+            </p>
+          </header>
+
+          {/* Main Interface Grid */}
+          <main className="grid lg:grid-cols-12 gap-8 w-full mb-20">
+
+            {/* Access Terminal */}
+            <div className="lg:col-span-7 bg-neutral-900/30 border border-white/5 rounded-3xl p-8 backdrop-blur-md relative overflow-hidden group">
+              <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-red-600 to-transparent opacity-50" />
+
+              <div className="flex items-center justify-between mb-10">
+                <h2 className="text-xl font-bold flex items-center gap-3 font-mono tracking-tighter">
+                  <Terminal className="w-5 h-5 text-red-600" />
+                  TERMINAL_SESSION: START
+                </h2>
+                <div className="flex gap-2">
+                  <div className="w-2 h-2 rounded-full bg-red-600 animate-ping" />
+                  <div className="w-2 h-2 rounded-full bg-red-900" />
                 </div>
               </div>
 
-              <h2 className="text-3xl font-bold text-center mb-2 text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-red-700 tracking-widest">AUTHENTICATE</h2>
-              <p className="text-center text-gray-500 text-sm mb-8">Enter Tournament</p>
-
-              <form onSubmit={handleLogin} className="space-y-6">
-                <div>
-                  <label className="block text-xs uppercase tracking-wider mb-2 text-gray-400 font-semibold">Team Name</label>
+              <div className="space-y-8">
+                <div className="relative">
+                  <label className="text-[10px] font-mono text-neutral-500 uppercase tracking-[0.3em] mb-3 block">User_Identifier</label>
                   <input
                     type="text"
                     value={teamName}
                     onChange={(e) => setTeamName(e.target.value)}
-                    className="w-full bg-black border-2 border-gray-700 hover:border-red-600/50 focus:border-red-600 p-3 pl-4 text-white focus:outline-none transition-all duration-300 font-mono rounded-lg"
-                    placeholder="Team Alpha"
+                    className="w-full bg-black/50 border border-white/10 rounded-xl px-5 py-4 text-white focus:border-red-600 focus:ring-1 focus:ring-red-600 transition-all outline-none font-mono text-lg"
+                    placeholder="TEAM_NAME_NULL"
                   />
                 </div>
 
-                <div>
-                  <label className="block text-xs uppercase tracking-wider mb-2 text-gray-400 font-semibold">Team ID (1-25)</label>
+                <div className="relative">
+                  <label className="text-[10px] font-mono text-neutral-500 uppercase tracking-[0.3em] mb-3 block">Protocol_Access_Code</label>
                   <input
                     type="number"
                     value={teamId}
                     onChange={(e) => setTeamId(e.target.value)}
-                    className="w-full bg-black border-2 border-gray-700 hover:border-red-600/50 focus:border-red-600 p-3 pl-4 text-white focus:outline-none transition-all duration-300 font-mono rounded-lg"
-                    placeholder="1-25"
-                    min="1"
-                    max="25"
+                    className="w-full bg-black/50 border border-white/10 rounded-xl px-5 py-4 text-white focus:border-red-600 focus:ring-1 focus:ring-red-600 transition-all outline-none font-mono text-lg"
+                    placeholder="00"
                   />
                 </div>
 
                 <button
-                  type="submit"
-                  className="w-full bg-gradient-to-r from-red-700 to-red-900 hover:from-red-600 hover:to-red-800 text-white font-bold py-3 transition-all duration-300 uppercase tracking-widest mt-6 rounded-lg shadow-lg shadow-red-900/50 hover:shadow-red-600/70 transform hover:scale-105"
+                  onClick={handleStart}
+                  className="w-full relative group h-16 mt-4 overflow-hidden rounded-xl bg-red-600 text-white font-black text-xl tracking-tighter transition-all hover:scale-[1.01] active:scale-[0.98]"
                 >
-                  Join Tournament
+                  <div className="absolute inset-0 bg-white/10 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
+                  <span className="relative flex items-center justify-center gap-3">
+                    INITIALIZE SYSTEM
+                    <ChevronRight className="w-6 h-6 group-hover:translate-x-1 transition-transform" />
+                  </span>
                 </button>
-              </form>
-
-              <div className="mt-6 pt-6 border-t border-gray-800 text-center text-xs text-gray-600">
-                {teamName && teamId && <span className="text-green-500">✓ Ready</span>}
               </div>
             </div>
-          </div>
+
+            {/* Side Info Panel */}
+            <div className="lg:col-span-5 flex flex-col gap-6">
+              {/* Quick Stats */}
+              <div className="grid grid-cols-3 gap-4">
+                {[
+                  { label: 'Teams', val: '15', col: 'text-cyan-500', icon: Users },
+                  { label: 'Stages', val: '05', col: 'text-purple-500', icon: Trophy },
+                  { label: 'Uptime', val: 'LIVE', col: 'text-red-500', icon: Flame },
+                ].map((stat, i) => (
+                  <div key={i} className="bg-neutral-900/40 border border-white/5 p-5 rounded-2xl text-center hover:bg-neutral-800/50 transition-colors">
+                    <stat.icon className={`w-5 h-5 ${stat.col} mx-auto mb-2`} />
+                    <div className="text-2xl font-black">{stat.val}</div>
+                    <div className="text-[9px] font-mono text-neutral-500 uppercase tracking-tighter">{stat.label}</div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Rules Block */}
+              <div className="flex-1 bg-gradient-to-b from-neutral-900/60 to-transparent border border-white/5 p-8 rounded-3xl relative">
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="p-2 bg-red-600/10 rounded-lg">
+                    <Lock className="w-5 h-5 text-red-600" />
+                  </div>
+                  <h3 className="text-sm font-bold uppercase tracking-[0.3em]">Directives</h3>
+                </div>
+
+                <div className="space-y-5">
+                  {[
+                    "Decrypt coordinates to advance location.",
+                    "Time-based elimination active each round.",
+                    "Last survivor claims the Death Note."
+                  ].map((rule, idx) => (
+                    <div key={idx} className="flex gap-4 group">
+                      <span className="font-mono text-red-600 font-bold">0{idx + 1}</span>
+                      <p className="text-sm text-neutral-400 group-hover:text-neutral-200 transition-colors">{rule}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </main>
+
+          {/* Personnel Section */}
+          <section className="w-full">
+            <div className="flex items-center gap-6 mb-12">
+              <div className="h-[1px] flex-1 bg-gradient-to-r from-transparent via-neutral-800 to-neutral-800" />
+              <h2 className="text-xs font-mono font-bold tracking-[1em] text-neutral-600 uppercase">Intel_Personnel</h2>
+              <div className="h-[1px] flex-1 bg-gradient-to-l from-transparent via-neutral-800 to-neutral-800" />
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <CharacterCard image="/kira-face.jpg" name="KIRA" description="User: Light Yagami. Capability: High-level manipulation and strategy." icon={Skull} />
+              <CharacterCard image="/l-detective.jpg" name="L" description="User: Unknown. Capability: Unparalleled deductive reasoning." icon={Eye} />
+              <CharacterCard image="/ryuk-shinigami.jpg" name="RYUK" description="User: Shinigami. Capability: Neutral observer of the trail." icon={Ghost} />
+            </div>
+          </section>
         </div>
+
+        {/* Footer Ticker */}
+        <footer className="fixed bottom-0 w-full bg-red-600 text-white py-1 z-50 overflow-hidden hidden md:block">
+          <div className="flex animate-[marquee_20s_linear_infinite] whitespace-nowrap font-mono text-[10px] font-bold uppercase tracking-tighter">
+            {[1, 2, 3, 4, 5].map(i => (
+              <span key={i} className="mx-4">
+                System Online // No unauthorized access // Cipher Trail 2026 // Agnel Cyber Cell // Initializing Round 1 // System Online //
+              </span>
+            ))}
+          </div>
+        </footer>
       </div>
     );
   }
 
-  // --- Playing Screen ---
-  if (gameState === 'playing') {
+  // Start Round Screen (Breathing space between rounds)
+  if (gameState === 'playing' && !readyForRound) {
+    const roundLabel = round <= 3 ? `Round ${round} - Group ${group}` : round === 4 ? 'Semi-Finals' : 'Grand Finale';
+
     return (
-      <div className="min-h-screen bg-gradient-to-br from-black via-gray-950 to-black text-gray-300 font-mono flex flex-col lg:flex-row overflow-hidden">
-        {/* Sidebar */}
-        <div className="w-full lg:w-96 border-b lg:border-b-0 lg:border-r border-gray-800 p-6 flex flex-col bg-gradient-to-b from-gray-950 to-black">
+      <div className="min-h-screen bg-gradient-to-b from-black via-gray-900 to-black text-white flex items-center justify-center px-4">
+        <div className="text-center max-w-2xl">
           <div className="mb-8">
-            <div className="flex items-center justify-between mb-4">
-              <div>
-                <h1 className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-red-600 to-red-800 tracking-widest">TOURNAMENT</h1>
-                <p className="text-xs text-red-500 font-mono mt-1">Team: <span className="text-yellow-400">{teamName}</span></p>
-                <p className="text-xs text-red-500 font-mono">Group: <span className="text-yellow-400">{group}</span></p>
-              </div>
-              <Skull className="w-8 h-8 text-red-600 animate-pulse" />
+            <Flame className="w-24 h-24 text-red-600 mx-auto animate-pulse drop-shadow-[0_0_30px_rgba(220,38,38,0.8)]" />
+          </div>
+
+          <h1 className="text-5xl md:text-7xl font-black mb-6">
+            <span className="bg-gradient-to-r from-red-600 via-orange-500 to-red-700 bg-clip-text text-transparent">
+              {roundLabel}
+            </span>
+          </h1>
+
+          <div className="mb-8 space-y-4">
+            <p className="text-2xl text-gray-300">
+              Team <span className="text-red-500 font-bold">{teamName}</span>
+            </p>
+            <p className="text-gray-400">
+              Take a breath. Strategize. Prepare for the next challenge.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4 mb-8">
+            <div className="bg-gray-900/50 border border-gray-800 rounded-xl p-4">
+              <div className="text-green-500 text-3xl font-black">{score}</div>
+              <div className="text-xs text-gray-500 uppercase">Score</div>
             </div>
-          </div>
-
-          {/* Tournament Progress */}
-          <div className="mb-6 space-y-2">
-            <h3 className="text-gray-500 text-xs uppercase font-bold">Tournament Progress</h3>
-            <div className="space-y-2">
-              <div className={`p-3 rounded border-l-4 ${round >= 1 ? 'border-l-green-600 bg-green-900/10' : 'border-l-gray-600 bg-gray-900/10'}`}>
-                <p className={`text-xs font-mono ${round >= 1 ? 'text-green-500' : 'text-gray-500'}`}>
-                  Round 1: {round === 1 ? (phase === 1 ? '● Phase 1' : '● Phase 2') : '✓ Complete'}
-                </p>
-              </div>
-              <div className={`p-3 rounded border-l-4 ${round >= 2 ? 'border-l-green-600 bg-green-900/10' : 'border-l-gray-600 bg-gray-900/10'}`}>
-                <p className={`text-xs font-mono ${round >= 2 ? 'text-green-500' : 'text-gray-500'}`}>
-                  Round 2: {round === 2 ? (phase === 1 ? '● Phase 1' : '● Phase 2') : round > 2 ? '✓ Complete' : '○ Locked'}
-                </p>
-              </div>
-              <div className={`p-3 rounded border-l-4 ${round >= 3 ? 'border-l-green-600 bg-green-900/10' : 'border-l-gray-600 bg-gray-900/10'}`}>
-                <p className={`text-xs font-mono ${round >= 3 ? 'text-green-500' : 'text-gray-500'}`}>
-                  Round 3: {round === 3 ? '● Finals' : round > 3 ? '✓ Won!' : '○ Locked'}
-                </p>
-              </div>
-            </div>
-          </div>
-
-          {/* Timer */}
-          <div className="mb-6 p-4 bg-gradient-to-r from-red-900/20 to-red-900/10 border-2 border-red-600 rounded-lg shadow-lg shadow-red-900/30">
-            <h3 className="text-red-500 text-xs uppercase mb-3 flex items-center gap-2 font-bold">
-              <Flame size={14} className="animate-pulse" /> Time Remaining
-            </h3>
-            <Timer initialTime={1200} onExpire={() => alert("TIME EXPIRED!")} />
-            <div className="mt-2 text-xs text-red-400">R{round}P{phase} - Challenge {stageIndex + 1}</div>
-          </div>
-
-          {/* System Logs */}
-          <div className="flex-1 overflow-y-auto mb-4 p-4 bg-black/50 border border-gray-800 rounded-lg">
-            <h3 className="text-gray-500 text-xs uppercase font-bold border-b border-gray-700 pb-2 mb-3">Logs</h3>
-            <div className="space-y-1">
-              {logs.slice(0, 12).map((log, i) => (
-                <div key={i} className="text-xs text-green-500 font-mono border-l border-green-900/30 pl-2 py-1">
-                  {log}
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* Main Content */}
-        <div className="w-full lg:flex-1 p-6 lg:p-12 relative flex flex-col overflow-y-auto">
-          <div className="max-w-4xl mx-auto w-full flex-1 flex flex-col justify-center relative z-10">
-            <div className="flex items-center justify-between mb-8 pb-4 border-b-2 border-red-900/50">
-              <div className="flex items-center space-x-4 text-sm uppercase tracking-widest text-gray-500">
-                <span className="px-3 py-1 bg-red-900/20 border border-red-600 rounded text-red-500 font-bold">R{round}P{phase}</span>
-                <ChevronRight size={14} />
-                <span className="px-3 py-1 bg-blue-900/20 border border-blue-600 rounded text-blue-500 font-bold">GRP {group}</span>
-              </div>
-              <Eye className="w-6 h-6 text-red-600 animate-pulse" />
-            </div>
-
-            {currentClue && (
-              <div className="mb-10 space-y-6">
-                <div className="space-y-3">
-                  <h2 className="text-4xl font-bold text-white mb-3 border-l-4 border-red-600 pl-6 text-balance">
-                    {currentClue.story}
-                  </h2>
-                </div>
-
-                {/* Cipher Block */}
-                <div className="bg-gradient-to-r from-gray-900 to-black p-6 rounded-lg border-2 border-cyan-600/50 shadow-lg shadow-cyan-900/30">
-                  <div className="flex items-start gap-4 mb-4">
-                    <div className="p-2 bg-cyan-900/30 rounded">
-                      <Binary className="text-cyan-500 w-6 h-6" />
-                    </div>
-                    <div className="flex-1">
-                      <h3 className="text-cyan-500 font-bold text-sm uppercase mb-1">Cipher</h3>
-                      <p className="font-mono text-base break-all text-white bg-black/50 p-3 rounded border border-cyan-900/30 leading-relaxed">{currentClue.cipher}</p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Objective Block */}
-                <div className="bg-gradient-to-r from-black to-gray-900 p-6 rounded-lg border-2 border-yellow-600/50 shadow-lg shadow-yellow-900/30">
-                  <div className="flex items-start gap-4 mb-4">
-                    <div className="p-2 bg-yellow-900/30 rounded">
-                      <MapPin className="text-yellow-600 w-6 h-6" />
-                    </div>
-                    <div className="flex-1">
-                      <h3 className="text-yellow-600 font-bold text-sm uppercase mb-2">Your Mission</h3>
-                      <p className="text-gray-300 text-base mb-3">{currentClue.clue}</p>
-                      <div className="bg-black/50 p-3 rounded border-l-2 border-yellow-600">
-                        <p className="text-xs text-yellow-500 italic">Hint: {currentClue.hint}</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* Answer Input */}
-            <div className="mt-auto">
-              <label className="block text-xs uppercase tracking-wider mb-3 text-gray-400 font-bold">
-                Submit Answer
-              </label>
-              <form onSubmit={handleSubmitAnswer} className="relative">
-                <div className="relative">
-                  <Terminal className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-600 w-5 h-5" />
-                  <input
-                    type="text"
-                    value={inputAnswer}
-                    onChange={(e) => setInputAnswer(e.target.value)}
-                    className="w-full bg-black border-2 border-gray-700 hover:border-green-600/50 focus:border-green-600 p-4 pl-12 pr-24 text-xl text-green-500 font-mono focus:outline-none focus:ring-2 focus:ring-green-900/50 transition-all rounded-lg"
-                    placeholder="ENTER_ANSWER"
-                    autoFocus
-                  />
-                  <button
-                    type="submit"
-                    className="absolute right-2 top-1/2 transform -translate-y-1/2 px-6 py-2 bg-gradient-to-r from-green-700 to-green-900 hover:from-green-600 hover:to-green-800 text-white rounded font-bold uppercase text-sm border border-green-600 transition-all shadow-lg shadow-green-900/50 hover:scale-105"
-                  >
-                    Submit
-                  </button>
-                </div>
-              </form>
-              {errorMsg && (
-                <div className="mt-3 p-3 bg-red-900/20 border-2 border-red-600 rounded text-red-500 text-sm font-bold flex items-center gap-2 animate-pulse shadow-lg shadow-red-900/30">
-                  <AlertTriangle size={16} /> {errorMsg}
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  // --- Advancement/Elimination Screen ---
-  if (gameState === 'advancement') {
-    const getAdvancementMessage = () => {
-      if (round === 1 && phase === 1) return "Phase 1 Complete! 4 teams advance from each group.";
-      if (round === 1 && phase === 2) return "Round 1 Complete! 3 teams from each group advance to Round 2.";
-      if (round === 2 && phase === 1) return "Phase 1 Complete! 3 teams advance from each group.";
-      if (round === 2 && phase === 2) return "Round 2 Complete! 3 finalists compete for the Death Note!";
-      return "Advanced!";
-    };
-
-    return (
-      <div className="min-h-screen bg-gradient-to-b from-black via-gray-950 to-black flex flex-col items-center justify-center text-center p-8 relative overflow-hidden">
-        <div className="absolute inset-0 opacity-30 pointer-events-none">
-          <div className="absolute top-1/3 left-1/3 w-96 h-96 bg-red-900 rounded-full mix-blend-multiply filter blur-3xl animate-pulse"></div>
-        </div>
-
-        <div className="relative z-10 max-w-2xl space-y-8">
-          <div className="flex justify-center mb-8">
-            <img src="/ryuk-shinigami.jpg" alt="Ryuk" className="w-64 h-64 object-cover rounded-full border-4 border-red-600 shadow-2xl shadow-red-900/50 animate-pulse" />
-          </div>
-
-          <div className="space-y-4">
-            <h2 className="text-5xl md:text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-red-700">ADVANCEMENT</h2>
-            <p className="text-xl text-gray-300">Congratulations, Team {teamName}!</p>
-          </div>
-
-          <div className="bg-gradient-to-r from-red-900/20 to-black border-2 border-red-900/50 rounded-lg p-8 backdrop-blur-sm">
-            <p className="text-gray-300 text-lg italic mb-6">{getAdvancementMessage()}</p>
-            <div className="flex justify-center gap-4 mt-6">
-              <StatBox label="Round" value={round} icon={Star} color="border-red-600" />
-              <StatBox label="Phase" value={phase} icon={Shield} color="border-green-600" />
-              <StatBox label="Group" value={group} icon={Users} color="border-yellow-600" />
+            <div className="bg-gray-900/50 border border-gray-800 rounded-xl p-4">
+              <div className="text-purple-500 text-3xl font-black">{round}/5</div>
+              <div className="text-xs text-gray-500 uppercase">Round</div>
             </div>
           </div>
 
           <button
-            onClick={proceedToNextPhase}
-            className="px-12 py-4 bg-gradient-to-r from-red-600 to-red-800 text-white font-bold text-lg hover:from-red-700 hover:to-red-900 transition-all duration-300 rounded-lg uppercase tracking-widest shadow-lg shadow-red-900/50 hover:shadow-red-600/70 transform hover:scale-105 w-full md:w-auto"
+            onClick={() => setReadyForRound(true)}
+            className="px-12 py-5 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-black rounded-xl text-xl transition-all shadow-2xl shadow-red-600/50 hover:scale-105 uppercase tracking-wider"
           >
-            Continue to Next Phase
+            Start Round {round}
           </button>
         </div>
       </div>
     );
   }
 
-  // --- Victory Screen ---
+  // Playing State
+  if (gameState === 'playing') {
+    const puzzle = getCurrentPuzzle();
+
+    if (!puzzle) {
+      return (
+        <div className="min-h-screen bg-black text-white flex items-center justify-center">
+          <div className="text-center">
+            <AlertTriangle className="w-16 h-16 text-yellow-500 mx-auto mb-4" />
+            <h2 className="text-2xl font-bold">Error: Puzzle not found</h2>
+          </div>
+        </div>
+      );
+    }
+
+    const roundLabel = round <= 3 ? `Round ${round} - Group ${group}` : round === 4 ? 'Semi-Finals' : 'Grand Finale';
+
+    // Format timer display
+    const formatTime = (seconds: number) => {
+      const m = Math.floor(seconds / 60);
+      const s = seconds % 60;
+      return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+    };
+
+    return (
+      <div className="relative min-h-screen">
+        {/* Glitch Effect Overlay */}
+        {screenGlitch && (
+          <div className="fixed inset-0 z-50 pointer-events-none">
+            <div className="absolute inset-0 bg-red-600 opacity-40 animate-pulse"></div>
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="text-6xl md:text-9xl font-black text-red-500 animate-bounce drop-shadow-[0_0_50px_rgba(239,68,68,1)]">
+                WRONG FLAG!
+              </div>
+            </div>
+            <div className="absolute inset-0" style={{
+              animation: 'glitch 0.3s infinite',
+              background: 'repeating-linear-gradient(0deg, rgba(255,0,0,0.1) 0px, transparent 2px, transparent 4px, rgba(255,0,0,0.1) 4px)',
+            }}></div>
+          </div>
+        )}
+
+        <div className="min-h-screen bg-gradient-to-b from-black via-gray-900 to-black text-white px-4 py-6">
+          <div className="max-w-4xl mx-auto">
+            {/* Header with Timer */}
+            <div className="mb-8 pb-6 border-b-2 border-red-900/50">
+              <div className="flex justify-between items-start mb-4">
+                <div>
+                  <h2 className="text-2xl md:text-3xl font-black text-white">{teamName}</h2>
+                  <p className="text-gray-400 text-sm">Team ID: {teamId} {round <= 3 && `| Group ${group}`}</p>
+                </div>
+                <div className="text-right">
+                  <div className="text-green-500 text-3xl md:text-4xl font-black font-mono">{score}</div>
+                  <div className="text-xs text-gray-500 uppercase">Points</div>
+                </div>
+              </div>
+
+              {/* COUNTDOWN TIMER - Prominent Display */}
+              <div className={`bg-gradient-to-r ${timeLeft < 60 ? 'from-red-950 to-red-900' : 'from-gray-900 to-black'} border-2 ${timeLeft < 60 ? 'border-red-600' : 'border-red-900'} rounded-xl p-6 text-center ${timeLeft < 60 ? 'animate-pulse' : ''}`}>
+                <div className="flex items-center justify-center gap-3 mb-2">
+                  <Clock className={`w-8 h-8 ${timeLeft < 60 ? 'text-red-500 animate-bounce' : 'text-red-400'}`} />
+                  <div className={`text-5xl md:text-6xl font-black font-mono ${timeLeft < 60 ? 'text-red-500' : 'text-red-400'}`}>
+                    {formatTime(timeLeft)}
+                  </div>
+                </div>
+                <div className="text-sm text-gray-400 uppercase tracking-wider">
+                  {timeLeft < 60 ? '⚠️ TIME RUNNING OUT! ⚠️' : 'Time Remaining'}
+                </div>
+              </div>
+            </div>
+
+            {/* Round Progress */}
+            <div className="mb-8">
+              <div className="flex items-center justify-between mb-3">
+                <span className="text-lg font-bold text-red-500">{roundLabel}</span>
+                <span className="text-sm text-gray-400 font-mono">Stage {round}/5</span>
+              </div>
+              <div className="h-3 bg-gray-800 rounded-full overflow-hidden border border-gray-700">
+                <div
+                  className="h-full bg-gradient-to-r from-red-600 via-orange-500 to-yellow-500 transition-all duration-1000 shadow-lg shadow-red-600/50"
+                  style={{ width: `${(round / 5) * 100}%` }}
+                />
+              </div>
+            </div>
+
+            {/* Main Puzzle Card */}
+            <div className="bg-gradient-to-br from-gray-900 via-black to-gray-900 border-2 border-red-900/60 rounded-2xl p-6 md:p-8 shadow-2xl shadow-red-900/20 mb-8">
+              {/* Title */}
+              <div className="flex items-center gap-4 mb-6 pb-4 border-b border-gray-800">
+                <div className="p-3 bg-red-950/50 rounded-xl border border-red-900">
+                  <MapPin className="w-7 h-7 text-red-500" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-2xl md:text-3xl font-black text-white">{puzzle.title}</h3>
+                  <p className="text-gray-400 text-sm uppercase tracking-wider">Physical Hunt Challenge</p>
+                </div>
+                <Lock className="w-6 h-6 text-red-600" />
+              </div>
+
+              {/* Encrypted Riddle */}
+              <div className="space-y-6">
+                <div className="bg-black/60 border-2 border-red-900/40 rounded-xl p-6">
+                  <div className="flex items-center gap-2 mb-4">
+                    <Terminal className="w-5 h-5 text-red-500" />
+                    <div className="text-sm text-red-400 uppercase font-bold tracking-widest">Encrypted Riddle</div>
+                  </div>
+                  <div className="text-white font-mono text-base md:text-lg leading-relaxed bg-gray-900/50 p-4 rounded-lg border border-gray-800">
+                    {puzzle.riddle}
+                  </div>
+                </div>
+
+                {/* Misleading Hint Section (Hidden by default) */}
+                {showHint && (
+                  <div className="bg-purple-950/20 border-2 border-purple-900/40 rounded-xl p-6 animate-pulse">
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="flex items-center gap-2">
+                        <Ghost className="w-6 h-6 text-purple-500 animate-bounce" />
+                        <div className="text-sm text-purple-400 uppercase font-bold tracking-widest">Ryuk's Hint 🍎</div>
+                      </div>
+                      <div className="text-xs text-gray-500">
+                        Hint {currentHintIndex + 1}/{puzzle.hints.length}
+                      </div>
+                    </div>
+                    <div className="text-white/90 italic leading-relaxed mb-4">{puzzle.hints[currentHintIndex]}</div>
+
+                    {/* Next Hint Button */}
+                    {puzzle.hints.length > 1 && (
+                      <button
+                        onClick={() => setCurrentHintIndex((currentHintIndex + 1) % puzzle.hints.length)}
+                        className="w-full px-4 py-2 bg-purple-900/50 hover:bg-purple-800/50 border border-purple-600 rounded-lg text-purple-300 text-sm font-bold transition-all hover:scale-105 flex items-center justify-center gap-2"
+                      >
+                        <Ghost className="w-4 h-4" />
+                        Next Hint →
+                      </button>
+                    )}
+
+                    <div className="text-xs text-gray-500 mt-3 text-center">※ We warned you this would be useless...</div>
+                  </div>
+                )}
+
+                {/* Instructions */}
+                <div className="bg-yellow-950/10 border border-yellow-900/30 rounded-xl p-5">
+                  <div className="text-yellow-400 font-bold text-sm mb-2">📍 HOW TO PROCEED:</div>
+                  <ol className="text-gray-300 text-sm space-y-2">
+                    <li><span className="text-cyan-400 font-mono">1.</span> Decode the encrypted riddle above</li>
+                    <li><span className="text-cyan-400 font-mono">2.</span> Find the physical location on campus</li>
+                    <li><span className="text-cyan-400 font-mono">3.</span> Locate the chit at that location</li>
+                    <li><span className="text-cyan-400 font-mono">4.</span> Enter the key from the chit in the input field below</li>
+                  </ol>
+                </div>
+
+                {/* Answer Input */}
+                <div className="space-y-4">
+                  <label className="block">
+                    <div className="text-sm text-gray-400 uppercase mb-2 font-bold tracking-wider">
+                      🔐 Enter the Key from Chit
+                    </div>
+                    <div className="flex gap-3">
+                      <input
+                        type="text"
+                        value={answer}
+                        onChange={(e) => setAnswer(e.target.value)}
+                        onKeyPress={(e) => e.key === 'Enter' && handleSubmitAnswer()}
+                        className={`flex-1 px-5 py-4 bg-black border-2 rounded-xl text-white font-mono text-lg uppercase focus:outline-none transition-all ${wrongAnswer
+                          ? 'border-red-600 animate-shake shadow-lg shadow-red-600/50'
+                          : 'border-gray-700 focus:border-green-600 focus:shadow-lg focus:shadow-green-600/30'
+                          }`}
+                        placeholder="ACC{...}"
+                        autoFocus
+                      />
+                      <button
+                        onClick={handleSubmitAnswer}
+                        className="px-8 py-4 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white font-black rounded-xl transition-all shadow-lg hover:shadow-green-600/50 uppercase tracking-wider"
+                      >
+                        Submit
+                      </button>
+                    </div>
+                  </label>
+
+                  {wrongAnswer && (
+                    <div className="flex items-center gap-2 text-red-500 bg-red-950/30 border border-red-900 rounded-lg p-3 animate-pulse">
+                      <AlertTriangle className="w-5 h-5" />
+                      <span className="font-bold">INCORRECT KEY! Try again.</span>
+                    </div>
+                  )}
+
+                  {/* Show Hint Button */}
+                  <button
+                    onClick={() => setShowHint(!showHint)}
+                    className="text-sm text-purple-400 hover:text-purple-300 transition-all underline decoration-dotted hover:scale-105 flex items-center gap-2 mx-auto"
+                  >
+                    <Ghost className="w-4 h-4" />
+                    {showHint ? '🙈 Hide Ryuk\'s Useless Hint' : '🍎 Desperate? Click for Ryuk\'s "Hint" (Spoiler: It won\'t help)'}
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Stats Footer */}
+            <div className="grid grid-cols-3 gap-4">
+              <div className="bg-gray-900/50 border border-gray-800 rounded-xl p-4 text-center">
+                <div className="text-purple-500 text-2xl font-black">{round}/5</div>
+                <div className="text-xs text-gray-500 uppercase">Round</div>
+              </div>
+              <div className="bg-gray-900/50 border border-gray-800 rounded-xl p-4 text-center">
+                <div className="text-green-500 text-2xl font-black">{score}</div>
+                <div className="text-xs text-gray-500 uppercase">Score</div>
+              </div>
+              <div className="bg-gray-900/50 border border-gray-800 rounded-xl p-4 text-center">
+                <div className={`text-2xl font-black font-mono ${timeLeft < 60 ? 'text-red-500 animate-pulse' : 'text-yellow-500'}`}>
+                  {formatTime(timeLeft)}
+                </div>
+                <div className="text-xs text-gray-500 uppercase">Time Left</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Disqualified Screen (Timer Expired)
+  if (gameState === 'disqualified') {
+    return (
+      <div className="min-h-screen bg-black text-white flex items-center justify-center px-4 relative overflow-hidden">
+        {/* Red Flashing Background */}
+        <div className="absolute inset-0 bg-red-600 animate-pulse opacity-30"></div>
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-red-900/50 via-black to-black"></div>
+
+        {/* Alert Lines */}
+        {[...Array(10)].map((_, i) => (
+          <div
+            key={i}
+            className="absolute w-full h-1 bg-red-600 opacity-50 animate-pulse"
+            style={{
+              top: `${i * 10}%`,
+              animationDelay: `${i * 0.1}s`
+            }}
+          ></div>
+        ))}
+
+        <div className="text-center max-w-3xl z-10 relative">
+          <div className="mb-8">
+            <Skull className="w-40 h-40 text-red-600 mx-auto animate-bounce drop-shadow-[0_0_30px_rgba(220,38,38,0.8)]" />
+          </div>
+
+          <h1 className="text-7xl md:text-9xl font-black mb-6 animate-pulse">
+            <span className="bg-gradient-to-r from-red-600 via-red-500 to-red-700 bg-clip-text text-transparent drop-shadow-[0_0_20px_rgba(220,38,38,1)]">
+              DISQUALIFIED
+            </span>
+          </h1>
+
+          <div className="mb-8 space-y-4">
+            <p className="text-3xl text-red-400 font-bold animate-pulse">
+              ⚠️ TIME EXPIRED ⚠️
+            </p>
+            <p className="text-xl text-gray-300">
+              Team <span className="text-red-500 font-bold">{teamName}</span>
+            </p>
+            <p className="text-lg text-gray-400 font-mono">
+              「 名前を書かれた人間は死ぬ 」
+            </p>
+          </ div>
+
+          <div className="bg-black/70 border-2 border-red-600 rounded-xl p-8 mb-8 backdrop-blur-sm">
+            <div className="text-red-500 text-xl font-mono mb-4">
+              ⏱️ 15:00 COUNTDOWN REACHED 00:00
+            </div>
+            <div className="text-gray-400 text-sm">
+              Round {round} | Score: {score}
+            </div>
+          </div>
+
+          <div className="text-red-400 text-sm font-mono mb-8 animate-pulse">
+            [ SYSTEM TERMINATED ]
+          </div>
+
+          <button
+            onClick={() => window.location.reload()}
+            className="px-8 py-4 bg-red-600 hover:bg-red-700 text-white font-bold rounded-lg text-lg transition-all shadow-lg hover:shadow-red-600/50"
+          >
+            Try Again
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // Victory State
   if (gameState === 'victory') {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-red-950 via-black to-black flex flex-col items-center justify-center p-8 text-center relative overflow-hidden">
-        <div className="absolute inset-0 opacity-40 pointer-events-none">
-          <div className="absolute top-1/4 right-1/4 w-96 h-96 bg-red-900 rounded-full mix-blend-multiply filter blur-3xl animate-pulse"></div>
-        </div>
-
-        <div className="relative z-10 max-w-2xl space-y-8">
-          <div className="flex justify-center mb-8">
-            <img src="/deathnote-notebook.jpg" alt="Death Note" className="w-64 h-80 object-cover rounded-lg border-4 border-red-600 shadow-2xl shadow-red-900/80 animate-bounce" />
+      <div className="min-h-screen bg-black text-white flex items-center justify-center px-4">
+        <div className="text-center max-w-2xl">
+          <div className="mb-8">
+            <Trophy className="w-32 h-32 text-yellow-500 mx-auto animate-bounce" />
           </div>
-
-          <div className="space-y-4">
-            <h1 className="text-7xl font-black text-transparent bg-clip-text bg-gradient-to-r from-red-600 to-yellow-600">DEATH NOTE FOUND</h1>
+          <h1 className="text-6xl font-black mb-4">
+            <GlitchText text="VICTORY!" className="text-yellow-500" />
+          </h1>
+          <p className="text-2xl text-gray-300 mb-8">
+            Congratulations, <span className="text-red-500 font-bold">{teamName}</span>!
+          </p>
+          <p className="text-lg text-gray-400 mb-8">
+            You've conquered all 5 rounds and emerged victorious in the Cipher Trail.
+          </p>
+          <div className="bg-gray-900 border border-yellow-600 rounded-xl p-8 mb-8">
+            <div className="text-yellow-500 text-5xl font-bold mb-2">{score}</div>
+            <div className="text-gray-400">Final Score</div>
           </div>
-
-          <div className="text-3xl text-yellow-300 font-bold">
-            Team {teamName} - You are the God of the New World!
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-4 my-8">
-            <div className="p-6 bg-red-900/20 border-2 border-red-600 rounded-lg">
-              <div className="text-2xl font-bold text-red-500 mb-1">CHAMPIONS</div>
-              <p className="text-sm text-gray-300">Final 3</p>
-            </div>
-            <div className="p-6 bg-blue-900/20 border-2 border-blue-600 rounded-lg">
-              <div className="text-2xl font-bold text-blue-500 mb-1">{teamName}</div>
-              <p className="text-sm text-gray-300">Victory!</p>
-            </div>
-            <div className="p-6 bg-yellow-900/20 border-2 border-yellow-600 rounded-lg">
-              <div className="text-2xl font-bold text-yellow-500 mb-1">TOURNAMENT</div>
-              <p className="text-sm text-gray-300">Won!</p>
-            </div>
-          </div>
-
-          <div className="p-8 bg-gradient-to-b from-black to-gray-900 border-2 border-red-600 rounded-lg font-mono text-left shadow-2xl shadow-red-900/50">
-            <div className="space-y-3 text-white">
-              <p className="text-red-500">{'> FINAL_TRANSMISSION.LOG'}</p>
-              <p className="text-green-400">Congratulations Team <span className="text-yellow-400 font-bold">{teamName}</span></p>
-              <p className="text-green-400">Status: <span className="text-green-500 font-bold">CHAMPION</span></p>
-              <p className="text-green-400">You have conquered the Death Note Tournament.</p>
-              <p className="text-green-400">Report to organizers for your trophy and prizes.</p>
-            </div>
-          </div>
+          <button
+            onClick={() => window.location.reload()}
+            className="px-8 py-4 bg-red-600 hover:bg-red-700 text-white font-bold rounded-lg text-lg transition"
+          >
+            Play Again
+          </button>
         </div>
       </div>
     );
