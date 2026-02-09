@@ -5,6 +5,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { Skull, Clock, Lock, Terminal, Eye, MapPin, AlertTriangle, ChevronRight, Binary, FileText, Ghost, Flame, Zap, Shield, BookOpen, Star, Trophy, Users, Hash, Cpu } from 'lucide-react';
+import { verifyFlag } from './actions';
 
 /**
  * AGNEL CYBER CELL - CIPHER TRAIL EVENT
@@ -32,6 +33,9 @@ const getGroupFromTeamId = (teamId: number): string => {
 
 // GAME DATA - Campus hunt with encrypted riddles
 // Flow: Encrypted Riddle → Decode → Find Location → Get Leetspeak Key → Enter Key
+// GAME DATA - Campus hunt with encrypted riddles
+// Flow: Encrypted Riddle → Decode → Find Location → Get Leetspeak Key → Enter Key
+// NOTE: Answers are now validated server-side
 const GAME_DATA = {
   // ROUND 1: First location hunt
   round1: {
@@ -39,54 +43,45 @@ const GAME_DATA = {
       id: 1,
       type: 'physical',
       title: 'Round 1: Decode & Hunt',
-      // CAESAR CIPHER (Shift 13 - ROT13)
-      riddle: "Gjb avarf fvg ba zl fxva, fvqr ol fvqr, N qbhoyr zveebe lbh pna'g qvivqr. V fgnaq jurer uhatro zrrgf vgf pher, Jngpuvat fanpx ehaf, ybhq naq fher. Svaq 99 jurer pnagrra pebjqf or — Gur ahzorerq gehax vf zr.",
-      cipherType: "ROT13",
+      // CAESAR CIPHER (Shift +3)
+      riddle: "Wzr qlqhv vlw rq pb vnln, vlgh eb vlgh, D grxeoh pluurxu brx fdq’w glylgh. L vwdqg zkhuh kxqjhu phhwv lwv fxuh, Zdwfklqj vqdfn uxqv, orxg dqg vxuh.",
+      cipherType: "CAESAR (+3)",
       hints: [
         "President Ria D'Costa once said she'd organize a meetup here. That was 6 months ago. We're still waiting. Meanwhile, Light Yagami solved 12 cases. You? Still reading this hint 😴",
         "Ebadur Rehman (VP) claims he knows where this is. He also claimed he'd finish the documentation last week. Trust issues much? Fun fact: In Bollywood, the hero always finds the location in the rain. It's not raining. Sorry! ☔",
-        "Akshath Narvekar (the developer of this game) hid the answer in the code. Just kidding, he didn't. He was too busy debugging. Ryuk is eating apples and laughing at your confusion 🍎. HINT: Every letter shifted by 13 positions!"
+        "Akshath Narvekar (the developer of this game) hid the answer in the code. Just kidding, he didn't. He was too busy debugging. Ryuk is eating apples and laughing at your confusion 🍎. HINT: Simple shift by 3!"
       ],
       location: "TREE99",
-      chit: "ACC{S0M30N3}",
-      answer: "ACC{S0M30N3}",
-      decodedKey: "SOMEONE",
       timer: 900
     },
     groupB: {
       id: 1,
       type: 'physical',
       title: 'Round 1: Decode & Hunt',
-      // MORSE CODE
-      riddle: "..-. --- ..- .-. / .- -. -.. / . .. --. .... - / -- .- .-. -.- / -- -.-- / ... .. -.. . --..-- / -... -.-- / --. ..- .. . - / .--. .-. .- -.-- . .-. ... / .. / ... - .- -. -.. / .- -. -.. / .... .. -.. . .-.-.- / -... . .... .. -. -.. / - .... . / .--. .-.. .- -. . / .-- .... . .-. . / ... -.- .. .-.. .-.. ... / .- .-. . / --. .-. --- .-- -. --..-- / -. . .- .-. / .-. .. -. --. .. -. --. / ..-. .- .. - .... / -... ..- - / -- .- -.. . / --- ..-. / ... - --- -. . .-.-.- / ..-. .. -. -.. / - .... . / - .-. ..- -. -.- / .-- .. - .... / ....- ---.. .----. ... / ..-. .- - . / em...- / -.-- --- ..- .----. ...- . / .-. . .- -.-. .... . -.. / - .... . / ... .. .-.. . -. - / --. .- - . .-.-.-",
-      cipherType: "MORSE",
+      // REVERSE WORDS
+      riddle: "tsomlA flah a derdnuh dehctE otni niks. raeN enots htiaf dna detfarc serutuf, I dnats neewteb reyarp dna ecitcarp.",
+      cipherType: "REVERSE WORDS",
       hints: [
         "Pratiksha Patil (Technical Head) debugged code here for 6 hours. Forgot a semicolon. Joel Bijo found it in 30 seconds. Awkward. Also, L from Death Note would've deduced this location just by looking at the cipher. You're not L. 🔍",
         "According to Yash Patil's calculations, this tree is exactly 48 meters from... wait, wrong Yash. That's Yash Bodake (Creative Team). Numbers aren't his thing. Try asking the canteen uncle instead! 🌳",
-        "Shah Rukh Khan once said 'Bade bade deshon mein aisi choti choti baatein hoti rehti hai.' This tree doesn't care about Bollywood wisdom. Neither does Misa Amane. Keep searching! 🎬 HINT: Dots and dashes, like old telegraphs!"
+        "Shah Rukh Khan once said 'Bade bade deshon mein aisi choti choti baatein hoti rehti hai.' This tree doesn't care about Bollywood wisdom. Neither does Misa Amane. Keep searching! 🎬 HINT: Read it backwards, word by word!"
       ],
       location: "TREE48",
-      chit: "ACC{TH3}",
-      answer: "ACC{TH3}",
-      decodedKey: "THE",
       timer: 900
     },
     groupC: {
       id: 1,
       type: 'physical',
       title: 'Round 1: Decode & Hunt',
-      // BINARY CODE (ASCII)
-      riddle: "01000101 01101001 01100111 01101000 01110100 00100000 01100001 01101110 01100100 00100000 01111010 01100101 01110010 01101111 00100000 01101111 01101110 00100000 01101101 01111001 00100000 01100010 01100001 01110010 01101011 00101100 00001010 01001001 00100000 01110111 01100001 01110100 01100011 01101000 00100000 01110100 01101000 01100101 00100000 01101100 01100001 01110111 01101110 00100000 01100110 01110010 01101111 01101101 00100000 01100100 01100001 01110111 01101110 00100000 01110100 01101111 00100000 01100100 01100001 01110010 01101011 00101110 00001010 01010111 01101000 01100101 01110010 01100101 00100000 01101000 01101111 01110011 01110100 01100101 01101100 00100000 01100101 01111001 01100101 01110011 00100000 01110011 01100101 01100101 00100000 01100110 01101001 01100101 01101100 01100100 01110011 00100000 01101111 01100110 00100000 01100111 01110010 01100101 01100101 01101110 00101100 00001010 01001001 00100000 01110011 01110100 01100001 01101110 01100100 00100000 01100010 01100101 01110100 01110111 01100101 01100101 01101110 00100000 01110100 01101000 01100101 00100000 01100011 01100001 01101100 01101101 00100000 01100001 01101110 01100100 00100000 01110011 01100011 01100101 01101110 01100101 00101110 00001010 01000110 01101001 01101110 01100100 00100000 00111000 00110000 00100000 01110111 01101000 01100101 01110010 01100101 00100000 01100010 01110010 01100101 01100101 01111010 01100101 01110011 00100000 01110010 01110101 01101110 00100000 11100010 10000000 10010100 00001010 01011001 01101111 01110101 01110010 00100000 01101110 01100101 01111000 01110100 00100000 01100011 01101100 01110101 01100101 00100111 01110011 00100000 01110001 01110101 01101001 01100101 01110100 01101100 01111001 00100000 01110111 01101111 01101110 00101110",
-      cipherType: "BINARY",
+      // MORSE CODE
+      riddle: ".- -.-. .. .-. -.-. .-.. . / -.. .-. .- --. --. .. -. --. / .- / - .- .. .-.. / --- -. / -... .- .-. -.- --..-- / -. . .- .-. / - .... . / .... --- ... - . .-.. / .-- .... . .-. . / . -.-- . ... / --- ..-. - . -. / .--. .- .-. -.- .-.-.-",
+      cipherType: "MORSE",
       hints: [
         "Alisha D'Cunha and Cheryl Cardoza had a team meeting here once. Lasted 5 minutes. Spent 2 hours taking aesthetic photos. Priorities! 📸 Meanwhile, Ryuk is judging from the shinigami realm.",
         "Justin Kunjumon (Creative Head) designed a poster about this location. It was beautiful. It was also completely wrong. The tree is NOT blue. Near from Death Note says: 'Creativity ≠ Accuracy' 🎨",
-        "In DDLJ, Simran ran through fields. In 3 Idiots, Rancho ran on campus. You? Running out of time looking for Tree 80. Check the hostel lawn. Or don't. Your funeral! ⏰ HINT: Computers speak in 0s and 1s!"
+        "In DDLJ, Simran ran through fields. In 3 Idiots, Rancho ran on campus. You? Running out of time looking for Tree 80. Check the hostel lawn. Or don't. Your funeral! ⏰ HINT: Dots and dashes!"
       ],
       location: "TREE80",
-      chit: "ACC{3Y35}",
-      answer: "ACC{3Y35}",
-      decodedKey: "EYES",
       timer: 900
     }
   },
@@ -97,114 +92,94 @@ const GAME_DATA = {
       id: 2,
       type: 'physical',
       title: 'Round 2: Decode & Hunt',
-      // ATBASH CIPHER (A=Z, B=Y, etc.)
-      riddle: "R hgzmw yb z kozxv lu kizbvi zmw kvzxv, Dllw zmw tzohh rm jfrvg xivzhv. Mlg olxpvw grtsg, mlg ufoorb glim, Qfhg lmv hnzoo xizxp dsvih grnv szh dlim. Mvzi gsv xsfixs R hlugor dzrg — Z wlli rnkvuivxg, bvg hgroo z tzv.",
-      cipherType: "ATBASH",
+      // HEXADECIMAL
+      riddle: "57 68 65 72 65 20 73 6d 61 6c 6c 20 70 72 61 79 65 72 73 20 61 6e 64 20 6c 61 75 67 68 74 65 72 20 67 72 6f 77 2c 0a 57 6f 6f 64 20 61 6e 64 20 67 6c 61 73 73 20 69 6e 20 71 75 69 65 74 20 73 68 6f 77 2e 0a 4e 6f 74 20 66 75 6c 6c 79 20 63 6c 6f 73 65 64 2c 20 6e 6f 74 20 66 75 6c 6c 79 20 66 72 65 65 e2 80 94 0a 41 20 63 72 61 63 6b 65 64 20 6f 6c 64 20 64 6f 6f 72 20 69 73 20 77 68 65 72 65 20 49 e2 80 99 6c 6c 20 62 65 2e",
+      cipherType: "HEXADECIMAL",
       hints: [
         "Sharon Shaju (Creative Member) tried to document this door for Instagram. Caption: 'Broken but beautiful.' Sakshi Sonkul (PR Head) said 'That's not on-brand.' Door remains undocumented. Light Yagami is disappointed in both of them 🚪",
         "Ria D'Costa scheduled a 'door repair committee meeting' here. Attendance: 0. The door is still broken. In Kabhi Khushi Kabhie Gham, they fixed family bonds. Can't fix a door though? 🎭",
-        "Ryuk once wrote in his death note: 'This door will be fixed.' Nothing happened. Turns out, doors don't have names. Who knew? Certainly not Yash Bodake (Creative Team) who suggested we 'rebrand' it instead 🔧 HINT: Mirror alphabet - A becomes Z!"
+        "Ryuk once wrote in his death note: 'This door will be fixed.' Nothing happened. Turns out, doors don't have names. Who knew? Certainly not Yash Bodake (Creative Team) who suggested we 'rebrand' it instead 🔧 HINT: Base 16!"
       ],
       location: "BROKENDOOR",
-      chit: "ACC{3RAS3D}",
-      answer: "ACC{3RAS3D}",
-      decodedKey: "ERASED",
       timer: 900
     },
     groupB: {
       id: 2,
       type: 'physical',
       title: 'Round 2: Decode & Hunt',
-      // HEXADECIMAL
-      riddle: "49 20 62 72 65 61 74 68 65 20 62 75 74 20 68 61 76 65 20 6e 6f 20 6c 75 6e 67 73 2c 0a 49 20 68 75 6d 20 74 68 6f 75 67 68 20 49 20 64 6f 6e 27 74 20 73 69 6e 67 2e 0a 48 75 67 67 69 6e 67 20 74 68 65 20 77 61 6c 6c 20 62 79 20 74 68 65 20 67 69 72 6c 73 27 20 77 61 79 20 69 6e 2c 0a 49 20 74 75 72 6e 20 68 6f 74 20 64 61 79 73 20 74 6f 20 73 70 72 69 6e 67 2e 0a 0a 46 6f 6c 6c 6f 77 20 74 68 65 20 6c 69 6e 65 20 6f 66 20 63 6f 6f 6c 69 6e 67 20 67 75 61 72 64 73 20 69 6e 20 61 20 72 6f 77 20 e2 80 94 0a 57 68 65 72 65 20 74 68 65 79 20 72 65 73 74 2c 20 79 6f 75 72 20 6e 65 78 74 20 63 6c 75 65 20 77 69 6c 6c 20 73 68 6f 77 2e",
-      cipherType: "HEXADECIMAL",
+      // BINARY
+      riddle: "01000001 00100000 01110010 01101111 01110111 00100000 01101111 01100110 00100000 01101101 01100101 01110100 01100001 01101100 00100000 01101100 01110101 01101110 01100111 01110011 00101100 00100000 01000010 01110010 01100101 01100001 01110100 01101000 01101001 01101110 01100111 00100000 01100110 01101111 01110010 00100000 01101111 01110100 01101000 01100101 01110010 01110011 00101110 00100000 01001000 01110101 01100111 01100111 01101001 01101110 01100111 00100000 01110100 01101000 01100101 00100000 01110111 01100001 01101100 01101100 00100000 01100010 01111001 00100000 01110100 01101000 01100101 00100000 01100111 01101001 01110010 01101100 01110011 00100111 00100000 01110111 01100001 01111001 00100000 01101001 01101110 00101110",
+      cipherType: "BINARY",
       hints: [
         "This AC unit was installed by Nishan Menezes (Treasurer). He said 'It's an investment in cool vibes.' Rajiv Agarwal (Finance Head) is still calculating the ROI. Rem from Death Note would've just destroyed it 💨",
         "Advik Saxena (PR Member) posted about this AC on social media: '❄️ Staying Cool at ACC Events!' The AC wasn't even on. Samarthya Deore fact-checked it. Awkward. L approves of the fact-checking though! 🤔",
-        "In The Matrix, Neo chose the red pill. In Death Note, Light chose the death note. You? You chose to waste time looking at an AC unit. Riya Raju (Documentation Head) documented this moment. It's in the Hall of Shame 📝 HINT: Base 16 - numbers and A-F!"
+        "In The Matrix, Neo chose the red pill. In Death Note, Light chose the death note. You? You chose to waste time looking at an AC unit. Riya Raju (Documentation Head) documented this moment. It's in the Hall of Shame 📝 HINT: 0s and 1s!"
       ],
       location: "GIRLSENTRANCEAC",
-      chit: "ACC{W0RLD}",
-      answer: "ACC{W0RLD}",
-      decodedKey: "WORLD",
       timer: 900
     },
     groupC: {
       id: 2,
       type: 'physical',
       title: 'Round 2: Decode & Hunt',
-      // VIGENERE CIPHER (Key: KIRA)
-      riddle: "S'q klyrx aii S wxerh pmoi e kyevh, Hviwwih mr wxsvmiw, rsx tesrx epsri. Xsrc hergxviw gmvgpi qc wost, Mr xvmfep xepiw ac evx mw wlsyr. Egvsww jvsq peww erh piexrmrk'w wmkr, Jmrh xli tmppev aliyi Evx pmriw wlmri.",
-      cipherKey: "KIRA",
-      cipherType: "VIGENERE",
+      // BASE64
+      riddle: "U3RvcmllcyBkYW5jZSBvbiBteSBza2luCldpdGhvdXQgbW92aW5nLgpJIHNwZWFrIGluIHRyaWJlcywKTm90IHdvcmRzLgpMYXcgd2F0Y2hlcyBtZSBmcm9tIGFjcm9zcy4=",
+      cipherType: "BASE64",
       hints: [
         "Pratiksha Patil once gave a tech talk here. Topic: 'Why Warli Art is Basically HTML/CSS.' Everyone was confused. Even the pillar. Misa Amane said 'I don't get it but he's cute!' Wrong person, Misa! 🎨",
         "Akshath Narvekar tried to scan this pillar for QR codes. Found none. Joel Bijo suggested 'Maybe it's AR?' It's not AR. It's just art. Batman investigated less. You're doing too much! 🤦‍♂️",
-        "Bollywood fact: No movie has ever featured Warli art prominently. Hollywood fact: Also no. Death Note fact: Warli art appears on page... never. This hint is useless. You're welcome! Cheryl Cardoza illustrated that perfectly 🖌️ HINT: The key is in Death Note's name!"
+        "Bollywood fact: No movie has ever featured Warli art prominently. Hollywood fact: Also no. Death Note fact: Warli art appears on page... never. This hint is useless. You're welcome! Cheryl Cardoza illustrated that perfectly 🖌️ HINT: Ends with '=' usually!"
       ],
       location: "WARLI",
-      chit: "ACC{M3A5UR3}",
-      answer: "ACC{M3A5UR3}",
-      decodedKey: "MEASURE",
       timer: 900
     }
   },
 
-  // ROUND 3: Third location (Final group round - combined phrases!)
+  // ROUND 3: Third location
   round3: {
     groupA: {
       id: 3,
       type: 'physical',
       title: 'Round 3: Decode & Hunt',
-      // REVERSE + BASE64
-      riddle: "LnlhdyBlaHQgbm8gZXIndW95ICx1bGIgeXRwbWUgZWh0IGRuaUYg4oCUIHlhdHMgSSBldGlodyBuaSBkcmliIGxheW9yIGEgZWRpc2VCIC5sbGFtcyBkbmEgZG51b3IgZGBgUyBJIGxsaXRTIC5sbGFjIHMncmVtbWl3cyBvbiAsZXZhdyBvbiAsaHNhbHBzIG9OIC5uaWFtZXIgSSB5cmQgdGV5IGV1bGIgZGV0bmlhUCAubnphciBldmVuIHR1YiBla3MgZWh0IGRsb2ggSQ==",
-      cipherType: "REVERSE+BASE64",
+      // BASE64
+      riddle: "SSBob2xkIHRoZSBza3kgYnV0IG5ldmVyIHJhaW4sClBhaW50ZWQgYmx1ZSB5ZXQgZHJ5IEkgcmVtYWluLgpObyBzcGxhc2gsIG5vIHdhdmUsIG5vIHN3aW1tZXI6cyBjYWxsLApTdGlsbCBJ4oCZbSBhIHBvb2wsIHJvdW5kIGFuZCBzbWFsbC4KQmVzaWRlIGEgcm95YWwgYmlyZCBpbiB3aGl0ZSBJIHN0YXkg4oCUCkZpbmQgdGhlIGVtcHR5IGJsdWUsIHlvdXLigJlyZSBvbiB0aGUgd2F5Lg==",
+      cipherType: "BASE64",
       hints: [
         "This pool is faker than Ebadur Rehman's 'I'm almost done with the report' excuses. It's painted. Not real. Kareena Kapoor's character Poo would NOT approve. Near from Death Note calculated: Fakeness Level = 97.3% 💧",
         "Alisha D'Cunha suggested filling it with real water. Ria D'Costa said 'Maybe next year.' It's been 3 years. The swan is still dry. In Titanic, Jack drowned. This pool? You couldn't drown if you tried! 🦢",
-        "Ryuk tried to write 'water pool' in his death note. Autocorrect changed it to 'what a fool.' He's talking about you. Justin Kunjumon designed a 'Save the Pool' campaign. Pool doesn't need saving. It's paint! 🎨💀 HINT: First decode Base64, then reverse the text!"
+        "Ryuk tried to write 'water pool' in his death note. Autocorrect changed it to 'what a fool.' He's talking about you. Justin Kunjumon designed a 'Save the Pool' campaign. Pool doesn't need saving. It's paint! 🎨💀 HINT: Standard encoding!"
       ],
       location: "WATERPOOL",
-      chit: "ACC{Y0UR_T0M0RR0W}",
-      answer: "ACC{Y0UR_T0M0RR0W}",
-      decodedKey: "YOUR TOMORROW",
       timer: 900
     },
     groupB: {
       id: 3,
       type: 'physical',
       title: 'Round 3: Decode & Hunt',
-      // BACON CIPHER (Using A/B pattern)
-      riddle: "AABAA BAAABAAAABAAAA BAABB AABBB AABAA AABBB ABAAA BAAAB BAABA BAABAAABAA BAABA BAAAA BAAAB BAABB BAAAA ABBAB ABAAA AAAAA AAABB BAAAB ABBAB BAAAA BAABB ABBAB ABBBA ABAAA BABBA ABABB ABBBA BAAAA ABBAA AAABB ABBAA ABBBA BAAAA BAABB BAABB AABAA BAAAA ABBBB AABAA BABAA AAAAA BAAAB ABAAA ABBBA AABAA ABBBA BAABA BAAAB AAAAA AABBB ABBAB BABAA ABABA BAAAA ABBBB AABAA BABAA ABBAB ABAAA AAAAA ABBAA AABAA AAABB AABAA BAAAB",
-      cipherType: "BACON",
+      // ROT13
+      riddle: "V'z gur svefg grfg orsber lbh cnff, N gval ebbz jurer fgenatref ner nfxrq. V qba'g fghql, lrg V xabj rirel snpr, V fvg ng gur rqtr bs gur pnzchf fcnpr.",
+      cipherType: "ROT13",
       hints: [
         "Yash Patil (Technical Member) was posted here for 'security.' He fell asleep in 10 minutes. The watchman woke him up. Ironic? Extremely. Light Yagami never slept on duty. Be like Light! 😴",
         "Sharon Shaju took aesthetic photos of this cabin. Caption: 'Gateway to Dreams.' Advik Saxena commented: 'It's just a cabin bro.' Bollywood would make this a song sequence. Reality? It's just a cabin, bro! 🎶",
-        "The watchman once caught Samarthya Deore trying to sneak out early from an event. Samarthya claimed: 'Emergency PR call!' The watchman: 'I've heard that 47 times this month.' L would deduce: Lying probability = 99.9% 😎 HINT: Francis Bacon's cipher - 5 letters for each character!"
+        "The watchman once caught Samarthya Deore trying to sneak out early from an event. Samarthya claimed: 'Emergency PR call!' The watchman: 'I've heard that 47 times this month.' L would deduce: Lying probability = 99.9% 😎 HINT: Shift by 13!"
       ],
       location: "WATCHMANCABIN",
-      chit: "ACC{N33D5_CL3ANS1NG}",
-      answer: "ACC{N33D5_CL3ANS1NG}",
-      decodedKey: "NEEDS CLEANSING",
       timer: 900
     },
     groupC: {
       id: 3,
       type: 'physical',
       title: 'Round 3: Decode & Hunt',
-      // RAILFENCE CIPHER (3 rails)
-      riddle: "Seteiu  arnne,btfrnw u  es'faWiigfaetwadr Tdnlo leshr  er anb h rce ls orFn  t  y heforsln  wrigrdnh c r re,   .bh   slbhihh r c  r e.id siehpaurpateae  dfc sd h.ui u  h dfooehyehveo",
-      cipherType: "RAILFENCE",
-      rails: 3,
+      // REVERSE ENTIRE
+      riddle: ".uoy rof stiaw eert yratilos A —eueuq eht morf yawa ,lla ti dniheB .eeffoc fo llems eht drawot klaW ,eerps ysion s’reyof eht evaeL",
+      cipherType: "REVERSE",
       hints: [
         "These pipes are redder than Rajiv Agarwal's budget spreadsheet when he sees expense reports. Nishan Menezes (Treasurer) suggested 'painting them gold for sponsorship.' Pipes declined. Rem finds this hilarious 💀",
         "Joel Bijo tried to use these pipes as a makeshift server rack. Pratiksha Patil said 'That's not how tech works.' In Mario, pipes are portals. In reality? They're just pipes. Misa Amane is confused! 🔴",
-        "Fun fact: Salman Bhai's Being Human shirts have been redder. These pipes? Close second. Riya Raju documented: '17 ACC members walk past daily. 0 notice them.' Light Yagami noticed. You didn't. Skill issue! 🔧 HINT: Text written in zigzag pattern across 3 rails!"
+        "Fun fact: Salman Bhai's Being Human shirts have been redder. These pipes? Close second. Riya Raju documented: '17 ACC members walk past daily. 0 notice them.' Light Yagami noticed. You didn't. Skill issue! 🔧 HINT: Read it backwards!"
       ],
-      location: "REDPIPES",
-      chit: "ACC{Y0UR_L!F35PAN}",
-      answer: "ACC{Y0UR_L!F35PAN}",
-      decodedKey: "YOUR LIFESPAN",
+      location: "TREE_BEHIND_FOYER",
       timer: 900
     }
   },
@@ -214,18 +189,15 @@ const GAME_DATA = {
     id: 4,
     type: 'physical',
     title: 'Semi-Finals: The Crowned One',
-    // POLYBIUS SQUARE
-    riddle: "11 12421242 445211445 33154542 221315154543 54154445 5315114243 11 131242435433 42434351113 4233 2242114343 445234431524 424445 33154542 344244434443 143435333 5211231544154442 43454243151144 44421511143 52231542 33154311 241524231 121115111 4445244215143 4215143 11 434231331533445 112421332 5231154215 34454434311533444343 44421511143 12421333143 445231115 331542534445 111311511543 241324143 4523241324 1433 2445434 131534143115",
-    cipherType: "POLYBIUS",
+    // VIGENERE (Key: KIRA)
+    riddle: "Xwk a ptrg, imk Iw bzen cg hsoy, A piuen zzblwe trik fyzxod bf fvg. Sy dpv cycet dprt pwclyej rysl, I ptltdmi fyz khyav wrw eodqte curlv byixoj. Fsvu trm tlyby trik crwje dw jtkg — Dpr veob vluimz qpdmz zfse syfaj bpe gry",
+    cipherType: "VIGENERE (Key: KIRA)",
     hints: [
-      "This swan witnessed 47 ACC meetings. 43 started with 'Where's Ria?' The crown? A gift from Sakshi Sonkul's PR campaign. Nobody knows why. Bollywood would make this the climax. Death Note would make Kira reveal himself here. Reality? Just a statue! 👑",
-      "Yash Bodake designed the crown. Took 6 hours. Looks like it took 6 minutes. Akshath Narvekar coded a 'Find the Swan' app. It crashed. The swan remains elusive. Near says: Incompetence detected 🦢",
-      "In K3G, everyone gathered for the climax. Here? Only the swan showed up. Ebadur Rehman said he'd be there. He lied. Alisha and Cheryl came for photos, left in 2 minutes. Ryuk ate an apple and left. You're alone with the swan. Awkward! 🍎 HINT: Ancient Greek 5x5 grid cipher!"
+      "Not a flag, yet tied up high? Sounds like something that flutters but isn't part of a nation. 'Next number after roku'... Roku is 6. So look near Tree 7! 🌳",
+      "A faded ribbon forgetting to fly? It's been there a while. The cloth that chose to stay. Look for a pole near the trees. 🚩",
+      "It's a Vigenere cipher with the key KIRA. The hidden text talks about a cloth on a pole next to Tree 7. Go find it! 🕵️‍♂️"
     ],
-    location: "SWANCROWN",
-    chit: "ACC{!I!A!M!}",
-    answer: "ACC{!I!A!M!}",
-    decodedKey: "I AM",
+    location: "POLE_TREE_7",
     timer: 900
   },
 
@@ -234,19 +206,16 @@ const GAME_DATA = {
     id: 5,
     type: 'physical',
     title: 'Grand Finale: The Final Truth',
-    // COMBINATION: Caesar(7) + Reverse + Base64
-    riddle: "Lm5lZW5hIGRuYSBoaWxpIHRpIGtycmVuYyBJIGRseSBsbnRzIGkgdGRlYWYgLmhscyBlaHQgZ25paGNudSBsbm9wIGVodCBkbmlG4oCUIHlsdGVpcSBkZWhjaHN0cyBzbXJhIGxhdGVtIGh0aVcgLmVldGwgYSBla2lsIGRuYXRzIEkgbGxpdHMgLHRpdXJmIG9uIGxzZXZhZWwgb04gLm55cyBlaHQgZ25paGN1b3QgZW5pcHMgbmVkb293IEEgLGhnaWggdGkgeXJyYWMgSSB0ZXkgcmV3b3Agb24ga25pcmQgSQ==",
+    // TRIPLE LAYER
+    riddle: "==nS5eNkssDkeIJGso2F0Ctj0UOPg1tjoIJioYEGaIJh0s2CndZGsQOknLNPsaDhzIJGbMNkgIZZndNiwY3jndJkwCujtIfibIJSgCtkoCNin8tAn4ZlyUOPsoNknjtiwo2F19NknBtiwI3jn4DGr92i3IZXndJhusNhnXEhnrujfM2FnrLP0CDllndpjsk3idIfibIfhbstjrIZZGso2F0Ctj0UOPg1tjoIJioYEGaIJh0s2CndZGsQOknLNPsaDhzIJGbMNkgIZZndNiwY3jndJkwCujtIfibIJSgOt",
     cipherType: "MULTI_LAYER",
     cipherSteps: ["BASE64", "REVERSE", "CAESAR_7"],
     hints: [
-      "FINAL HINT #1: This pole has more uptime than the ACC website (Akshath is crying). Nishan approved the budget to replace it. 3 years ago. Still standing. Like Light's ego! Also, SRK pointed here in DDLJ (citation needed) ⚡ HINT: Three layers deep!",
-      "FINAL HINT #2: Pratiksha once said 'Let's install sensors on this pole!' Yash Patil agreed. Nothing happened. Ria D'Costa said 'Great idea for next year!' (It's been 3 years). L calculates: Procrastination Level = Infinite 💡 HINT: Decode Base64 → Reverse → Caesar shift!",
-      "FINAL HINT #3: Congrats! You made it! You're better than 90% of participants. The other 10%? They asked Rajiv for sponsorship to skip rounds. He said no. Ryuk ate 47 apples watching this. Light became Kira wrote 1000 names. You? Still confused. Legend! 🎉💀 HINT: Final Caesar shift is 7!"
+      "Small but fenced like I'm grand. A leafy child in a learning land. It's a plant! But where?",
+      "Beside the halls where diplomas grow... That's the Polytechnic building. Left behind it?",
+      "Find me in a metal bowl. A planter? A basket? The answer is the Death Note hidden there! 📓💀"
     ],
-    location: "ELECTRICPOLE",
-    chit: "ACC{K!RA}",
-    answer: "ACC{K!RA}",
-    decodedKey: "KIRA",
+    location: "POLYTECHNIC_BASKET",
     timer: 900
   }
 };
@@ -643,11 +612,14 @@ export default function App() {
     return null;
   };
 
-  const handleSubmitAnswer = () => {
+  const handleSubmitAnswer = async () => {
     const puzzle = getCurrentPuzzle();
     if (!puzzle) return;
 
-    if (answer.trim().toUpperCase() === puzzle.answer.toUpperCase()) {
+    // Server-side verification
+    const result = await verifyFlag(group, round, answer);
+
+    if (result.success) {
       setWrongAnswer(false);
       setScore(score + 100);
       setAnswer('');
@@ -667,8 +639,13 @@ export default function App() {
         setGameState('victory');
       }
     } else {
+      // PENALTY LOGIC: -2 Minutes
       setWrongAnswer(true);
       setScreenGlitch(true); // Trigger glitch effect
+
+      // Reduce timer by 2 minutes (120 seconds), but don't go below 0
+      setTimeLeft(prev => Math.max(0, prev - 120));
+
       setTimeout(() => {
         setWrongAnswer(false);
         setScreenGlitch(false);
@@ -1147,7 +1124,7 @@ export default function App() {
                     <Terminal className="w-5 h-5 text-red-500" />
                     <div className="text-sm text-red-400 uppercase font-bold tracking-widest">Encrypted Riddle</div>
                   </div>
-                  <div className="text-white font-mono text-base md:text-lg leading-relaxed bg-gray-900/50 p-4 rounded-lg border border-gray-800">
+                  <div className="text-white font-mono text-base md:text-lg leading-relaxed bg-gray-900/50 p-4 rounded-lg border border-gray-800 break-all whitespace-pre-wrap">
                     {puzzle.riddle}
                   </div>
                 </div>
