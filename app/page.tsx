@@ -47,9 +47,9 @@ const GAME_DATA = {
       riddle: "Wzr qlqhv vlw rq pb vnln, vlgh eb vlgh, D grxeoh pluurxu brx fdq’w glylgh. L vwdqg zkhuh kxqjhu phhwv lwv fxuh, Zdwfklqj vqdfn uxqv, orxg dqg vxuh.",
       cipherType: "CAESAR (+3)",
       hints: [
-        "President Ria D'Costa once said she'd organize a meetup here. That was 6 months ago. We're still waiting. Meanwhile, Light Yagami solved 12 cases. You? Still reading this hint 😴",
-        "Ebadur Rehman (VP) claims he knows where this is. He also claimed he'd finish the documentation last week. Trust issues much? Fun fact: In Bollywood, the hero always finds the location in the rain. It's not raining. Sorry! ☔",
-        "Akshath Narvekar (the developer of this game) hid the answer in the code. Just kidding, he didn't. He was too busy debugging. Ryuk is eating apples and laughing at your confusion 🍎. HINT: Simple shift by 3!"
+        "Looking for the answer? It's right there. No, not there. THERE. You walked past it 3 times. 🤡",
+        "This tree is older than your coding skills. It also has more friends. Go hug it. Maybe it will whisper the answer. 🌳🫂",
+        "Akshath put a bug here. Im not talking about the code, I mean a literal insect. Find the insect, find the tree. (JK, Shift + 3, you genius) 🐛"
       ],
       location: "TREE99",
       timer: 900
@@ -62,9 +62,9 @@ const GAME_DATA = {
       riddle: "tsomlA flah a derdnuh dehctE otni niks. raeN enots htiaf dna detfarc serutuf, I dnats neewteb reyarp dna ecitcarp.",
       cipherType: "REVERSE WORDS",
       hints: [
-        "Pratiksha Patil (Technical Head) debugged code here for 6 hours. Forgot a semicolon. Joel Bijo found it in 30 seconds. Awkward. Also, L from Death Note would've deduced this location just by looking at the cipher. You're not L. 🔍",
-        "According to Yash Patil's calculations, this tree is exactly 48 meters from... wait, wrong Yash. That's Yash Bodake (Creative Team). Numbers aren't his thing. Try asking the canteen uncle instead! 🌳",
-        "Shah Rukh Khan once said 'Bade bade deshon mein aisi choti choti baatein hoti rehti hai.' This tree doesn't care about Bollywood wisdom. Neither does Misa Amane. Keep searching! 🎬 HINT: Read it backwards, word by word!"
+        "It's near the place where dreams go to die. Oh wait, that's the exam hall. This is just a tree. 💀",
+        "Yash Patil calculated the coordinates for this location. He failed math. Good luck! 📉",
+        "Reverse the words. Or reverse your life choices that led you to this moment. Both work. 🔄"
       ],
       location: "TREE48",
       timer: 900
@@ -77,9 +77,9 @@ const GAME_DATA = {
       riddle: ".- -.-. .. .-. -.-. .-.. . / -.. .-. .- --. --. .. -. --. / .- / - .- .. .-.. / --- -. / -... .- .-. -.- --..-- / -. . .- .-. / - .... . / .... --- ... - . .-.. / .-- .... . .-. . / . -.-- . ... / --- ..-. - . -. / .--. .- .-. -.- .-.-.-",
       cipherType: "MORSE",
       hints: [
-        "Alisha D'Cunha and Cheryl Cardoza had a team meeting here once. Lasted 5 minutes. Spent 2 hours taking aesthetic photos. Priorities! 📸 Meanwhile, Ryuk is judging from the shinigami realm.",
-        "Justin Kunjumon (Creative Head) designed a poster about this location. It was beautiful. It was also completely wrong. The tree is NOT blue. Near from Death Note says: 'Creativity ≠ Accuracy' 🎨",
-        "In DDLJ, Simran ran through fields. In 3 Idiots, Rancho ran on campus. You? Running out of time looking for Tree 80. Check the hostel lawn. Or don't. Your funeral! ⏰ HINT: Dots and dashes!"
+        "The tree is green. Groundbreaking info, I know. Unlike your team's performance so far. 📉",
+        "Dots and dashes. Like the connection bars on your phone when you actually need internet. 📶",
+        "Justin designed a poster for this tree. It looked better than you do right now. Sweat less, think more. 🎨"
       ],
       location: "TREE80",
       timer: 900
@@ -96,9 +96,9 @@ const GAME_DATA = {
       riddle: "57 68 65 72 65 20 73 6d 61 6c 6c 20 70 72 61 79 65 72 73 20 61 6e 64 20 6c 61 75 67 68 74 65 72 20 67 72 6f 77 2c 0a 57 6f 6f 64 20 61 6e 64 20 67 6c 61 73 73 20 69 6e 20 71 75 69 65 74 20 73 68 6f 77 2e 0a 4e 6f 74 20 66 75 6c 6c 79 20 63 6c 6f 73 65 64 2c 20 6e 6f 74 20 66 75 6c 6c 79 20 66 72 65 65 e2 80 94 0a 41 20 63 72 61 63 6b 65 64 20 6f 6c 64 20 64 6f 6f 72 20 69 73 20 77 68 65 72 65 20 49 e2 80 99 6c 6c 20 62 65 2e",
       cipherType: "HEXADECIMAL",
       hints: [
-        "Sharon Shaju (Creative Member) tried to document this door for Instagram. Caption: 'Broken but beautiful.' Sakshi Sonkul (PR Head) said 'That's not on-brand.' Door remains undocumented. Light Yagami is disappointed in both of them 🚪",
-        "Ria D'Costa scheduled a 'door repair committee meeting' here. Attendance: 0. The door is still broken. In Kabhi Khushi Kabhie Gham, they fixed family bonds. Can't fix a door though? 🎭",
-        "Ryuk once wrote in his death note: 'This door will be fixed.' Nothing happened. Turns out, doors don't have names. Who knew? Certainly not Yash Bodake (Creative Team) who suggested we 'rebrand' it instead 🔧 HINT: Base 16!"
+        "It's broken. Like your heart when she said 'you're just a friend'. 💔",
+        "This door leads to Narnia. Just kidding, it leads to disappointment. Open it anyway. 🚪",
+        "Hexadecimal? More like Hexa-difficult-for-you. Convert the numbers, Einstein. 🔢"
       ],
       location: "BROKENDOOR",
       timer: 900
@@ -111,9 +111,9 @@ const GAME_DATA = {
       riddle: "01000001 00100000 01110010 01101111 01110111 00100000 01101111 01100110 00100000 01101101 01100101 01110100 01100001 01101100 00100000 01101100 01110101 01101110 01100111 01110011 00101100 00100000 01000010 01110010 01100101 01100001 01110100 01101000 01101001 01101110 01100111 00100000 01100110 01101111 01110010 00100000 01101111 01110100 01101000 01100101 01110010 01110011 00101110 00100000 01001000 01110101 01100111 01100111 01101001 01101110 01100111 00100000 01110100 01101000 01100101 00100000 01110111 01100001 01101100 01101100 00100000 01100010 01111001 00100000 01110100 01101000 01100101 00100000 01100111 01101001 01110010 01101100 01110011 00100111 00100000 01110111 01100001 01111001 00100000 01101001 01101110 00101110",
       cipherType: "BINARY",
       hints: [
-        "This AC unit was installed by Nishan Menezes (Treasurer). He said 'It's an investment in cool vibes.' Rajiv Agarwal (Finance Head) is still calculating the ROI. Rem from Death Note would've just destroyed it 💨",
-        "Advik Saxena (PR Member) posted about this AC on social media: '❄️ Staying Cool at ACC Events!' The AC wasn't even on. Samarthya Deore fact-checked it. Awkward. L approves of the fact-checking though! 🤔",
-        "In The Matrix, Neo chose the red pill. In Death Note, Light chose the death note. You? You chose to waste time looking at an AC unit. Riya Raju (Documentation Head) documented this moment. It's in the Hall of Shame 📝 HINT: 0s and 1s!"
+        "It blows hot air. Just like your team leader. 🔥",
+        "01001000 01100101 01101100 01110000. Translate that. Oh wait, that just says 'Help'. You clearly need it. 🆘",
+        "It's near the girls' entrance. Don't be weird. Just look at the AC. 👀"
       ],
       location: "GIRLSENTRANCEAC",
       timer: 900
@@ -126,9 +126,9 @@ const GAME_DATA = {
       riddle: "U3RvcmllcyBkYW5jZSBvbiBteSBza2luCldpdGhvdXQgbW92aW5nLgpJIHNwZWFrIGluIHRyaWJlcywKTm90IHdvcmRzLgpMYXcgd2F0Y2hlcyBtZSBmcm9tIGFjcm9zcy4=",
       cipherType: "BASE64",
       hints: [
-        "Pratiksha Patil once gave a tech talk here. Topic: 'Why Warli Art is Basically HTML/CSS.' Everyone was confused. Even the pillar. Misa Amane said 'I don't get it but he's cute!' Wrong person, Misa! 🎨",
-        "Akshath Narvekar tried to scan this pillar for QR codes. Found none. Joel Bijo suggested 'Maybe it's AR?' It's not AR. It's just art. Batman investigated less. You're doing too much! 🤦‍♂️",
-        "Bollywood fact: No movie has ever featured Warli art prominently. Hollywood fact: Also no. Death Note fact: Warli art appears on page... never. This hint is useless. You're welcome! Cheryl Cardoza illustrated that perfectly 🖌️ HINT: Ends with '=' usually!"
+        "It's stick figures. Even you could draw this. Maybe. 🖍️",
+        "Base64? More like Based-on-nothing. Decode the string or stare at the wall forever. Your choice. 🧱",
+        "The art is tribal. Your confusion is primal. Connect the dots. Or don't. 🤷‍♂️"
       ],
       location: "WARLI",
       timer: 900
@@ -145,9 +145,9 @@ const GAME_DATA = {
       riddle: "SSBob2xkIHRoZSBza3kgYnV0IG5ldmVyIHJhaW4sClBhaW50ZWQgYmx1ZSB5ZXQgZHJ5IEkgcmVtYWluLgpObyBzcGxhc2gsIG5vIHdhdmUsIG5vIHN3aW1tZXI6cyBjYWxsLApTdGlsbCBJ4oCZbSBhIHBvb2wsIHJvdW5kIGFuZCBzbWFsbC4KQmVzaWRlIGEgcm95YWwgYmlyZCBpbiB3aGl0ZSBJIHN0YXkg4oCUCkZpbmQgdGhlIGVtcHR5IGJsdWUsIHlvdXLigJlyZSBvbiB0aGUgd2F5Lg==",
       cipherType: "BASE64",
       hints: [
-        "This pool is faker than Ebadur Rehman's 'I'm almost done with the report' excuses. It's painted. Not real. Kareena Kapoor's character Poo would NOT approve. Near from Death Note calculated: Fakeness Level = 97.3% 💧",
-        "Alisha D'Cunha suggested filling it with real water. Ria D'Costa said 'Maybe next year.' It's been 3 years. The swan is still dry. In Titanic, Jack drowned. This pool? You couldn't drown if you tried! 🦢",
-        "Ryuk tried to write 'water pool' in his death note. Autocorrect changed it to 'what a fool.' He's talking about you. Justin Kunjumon designed a 'Save the Pool' campaign. Pool doesn't need saving. It's paint! 🎨💀 HINT: Standard encoding!"
+        "It's a pool with no water. A scam. Like that crypto investment you made. 📉",
+        "The swan is judging you. Specifically you. It told me. 🦢",
+        "Base64 again? We're running out of budget for new ciphers. Just solve it. 💰"
       ],
       location: "WATERPOOL",
       timer: 900
@@ -160,9 +160,9 @@ const GAME_DATA = {
       riddle: "V'z gur svefg grfg orsber lbh cnff, N gval ebbz jurer fgenatref ner nfxrq. V qba'g fghql, lrg V xabj rirel snpr, V fvg ng gur rqtr bs gur pnzchf fcnpr.",
       cipherType: "ROT13",
       hints: [
-        "Yash Patil (Technical Member) was posted here for 'security.' He fell asleep in 10 minutes. The watchman woke him up. Ironic? Extremely. Light Yagami never slept on duty. Be like Light! 😴",
-        "Sharon Shaju took aesthetic photos of this cabin. Caption: 'Gateway to Dreams.' Advik Saxena commented: 'It's just a cabin bro.' Bollywood would make this a song sequence. Reality? It's just a cabin, bro! 🎶",
-        "The watchman once caught Samarthya Deore trying to sneak out early from an event. Samarthya claimed: 'Emergency PR call!' The watchman: 'I've heard that 47 times this month.' L would deduce: Lying probability = 99.9% 😎 HINT: Shift by 13!"
+        "The watchman knows you're wrong. He's laughing on the inside. 👮‍♂️",
+        "ROT13. Rotate 13 times. Or rotate your head until it makes sense. 😵",
+        "It's small, cramped, and smells like regret. Oh wait, that's just the cabin. 🏠"
       ],
       location: "WATCHMANCABIN",
       timer: 900
@@ -175,9 +175,9 @@ const GAME_DATA = {
       riddle: ".uoy rof stiaw eert yratilos A —eueuq eht morf yawa ,lla ti dniheB .eeffoc fo llems eht drawot klaW ,eerps ysion s’reyof eht evaeL",
       cipherType: "REVERSE",
       hints: [
-        "These pipes are redder than Rajiv Agarwal's budget spreadsheet when he sees expense reports. Nishan Menezes (Treasurer) suggested 'painting them gold for sponsorship.' Pipes declined. Rem finds this hilarious 💀",
-        "Joel Bijo tried to use these pipes as a makeshift server rack. Pratiksha Patil said 'That's not how tech works.' In Mario, pipes are portals. In reality? They're just pipes. Misa Amane is confused! 🔴",
-        "Fun fact: Salman Bhai's Being Human shirts have been redder. These pipes? Close second. Riya Raju documented: '17 ACC members walk past daily. 0 notice them.' Light Yagami noticed. You didn't. Skill issue! 🔧 HINT: Read it backwards!"
+        "Behind the noise. Where you wish you were right now. Away from this riddle. 🤫",
+        "Read it backwards. siht ekil tsuJ. If you can't read this, go back to kindergarten. 👶",
+        "It's a tree. Behind the foyer. If you get lost finding this, please delete the app. 🗑️"
       ],
       location: "TREE_BEHIND_FOYER",
       timer: 900
@@ -193,9 +193,9 @@ const GAME_DATA = {
     riddle: "Xwk a ptrg, imk Iw bzen cg hsoy, A piuen zzblwe trik fyzxod bf fvg. Sy dpv cycet dprt pwclyej rysl, I ptltdmi fyz khyav wrw eodqte curlv byixoj. Fsvu trm tlyby trik crwje dw jtkg — Dpr veob vluimz qpdmz zfse syfaj bpe gry",
     cipherType: "VIGENERE (Key: KIRA)",
     hints: [
-      "Not a flag, yet tied up high? Sounds like something that flutters but isn't part of a nation. 'Next number after roku'... Roku is 6. So look near Tree 7! 🌳",
-      "A faded ribbon forgetting to fly? It's been there a while. The cloth that chose to stay. Look for a pole near the trees. 🚩",
-      "It's a Vigenere cipher with the key KIRA. The hidden text talks about a cloth on a pole next to Tree 7. Go find it! 🕵️‍♂️"
+      "Look up. Higher. No, not at the birds. At the pole. 🤦‍♂️",
+      "Tree 7. It's the one that looks like Tree 6 but is named 7. Math is hard. 🌳",
+      "Vigenere. Key is KIRA. If you don't know who Kira is, why are you even here? 📓 (Hint: Use 'KIRA' as the key)"
     ],
     location: "POLE_TREE_7",
     timer: 900
@@ -211,9 +211,9 @@ const GAME_DATA = {
     cipherType: "MULTI_LAYER",
     cipherSteps: ["BASE64", "REVERSE", "CAESAR_7"],
     hints: [
-      "Small but fenced like I'm grand. A leafy child in a learning land. It's a plant! But where?",
-      "Beside the halls where diplomas grow... That's the Polytechnic building. Left behind it?",
-      "Find me in a metal bowl. A planter? A basket? The answer is the Death Note hidden there! 📓💀"
+      "It's in a bowl. Not a cereal bowl. A metal one. Outside. Touch grass. 🌱",
+      "Polytechnic building. If you don't know where that is, ask a fresher. They know everything. 🎓",
+      "Triple layer encryption? We just wanted to see you cry. Base64 -> Reverse -> Caesar(+7). Go. 😭"
     ],
     location: "POLYTECHNIC_BASKET",
     timer: 900
