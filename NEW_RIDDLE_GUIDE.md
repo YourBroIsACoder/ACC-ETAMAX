@@ -118,16 +118,15 @@
 - **Answer (Flag)**: `ACC{WR1T1NG}`
 - **Chit Encryption (Base64)**: `QUNDe1dSMVQxTkd9`
 
----
-
 ## 🏆 Semi-Finals (Round 4)
 - **Flag**: `ACC{GOD_OF_THE_WORLD}` (or `ACC{GODOFTHEWORLD}`)
 - **Location**: POLE_TREE_7 (Pole next to Tree 7)
-- **Riddle (Plain)**: "Not a flag, yet I’m tied up high, A faded ribbon that forgot to fly. By the count that follows roku, I flutter for those who notice small things. Find the cloth that chose to stay — The next number after roku shows the way"
+- **Riddle (Plain)**: "Not a flag, yet I'm tied up high, A faded ribbon that forgot to fly. By the count that follows roku, I flutter for those who notice small things. Find the cloth that chose to stay — The next number after roku shows the way"
 - **Riddle (Encrypted - Vigenere Key: KIRA)**: "Xwk a ptrg, imk Iw bzen cg hsoy, A piuen zzblwe trik fyzxod bf fvg. Sy dpv cycet dprt pwclyej rysl, I ptltdmi fyz khyav wrw eodqte curlv byixoj. Fsvu trm tlyby trik crwje dw jtkg — Dpr veob vluimz qpdmz zfse syfaj bpe gry"
 
 ## 👑 Grand Finale (Round 5)
-- **Flag**: `ACC{DEATH_NOTE_IN_THE_BOWL}`
+- **Flag**: `ACC{F0UND}`
 - **Location**: POLYTECHNIC_BASKET (Metal bowl/planter behind Polytechnic building)
-- **Riddle (Plain)**: "I’m small but fenced like I’m grand, A leafy child in a learning land. Beside the halls where diplomas grow, I rise up quiet, slow and low. Left behind the building that grants the scroll — Find me in a metal bowl."
-- **Riddle (Encrypted - Multi-Layer)**: "==nS5eNkssDkeIJGso2F0Ctj0UOPg1tjoIJioYEGaIJh0s2CndZGsQOknLNPsaDhzIJGbMNkgIZZndNiwY3jndJkwCujtIfibIJSgCtkoCNin8tAn4ZlyUOPsoNknjtiwo2F19NknBtiwI3jn4DGr92i3IZXndJhusNhnXEhnrujfM2FnrLP0CDllndpjsk3idIfibIfhbstjrIZZGso2F0Ctj0UOPg1tjoIJioYEGaIJh0s2CndZGsQOknLNPsaDhzIJGbMNkgIZZndNiwY3jndJkwCujtIfibIJSgOt"
+- **Riddle (Plain)**: "I'm small but fenced like I'm grand, A leafy child in a learning land. Beside the halls where diplomas grow, I rise up quiet, slow and low. Left behind the building that grants the scroll — Find me in a metal bowl."
+- **Riddle (Encrypted - Morse + Caesar)**: `--... / .--. - / --.. - .... ... ... / .. -... .- / -- .-.. ..- .--- .-.. -.- / ... .--. .-. ..-. / .--. - / -. -.-- .... ..- -.- / .... / .-.. . .... -- ..-. / .--- -... ... -.- / .--. ..- / .... / ... .-.. .... -.-- ..- .--. ..- -. / ... ..- ..- -.. / .. .-.. --.. .--. -.- .-.. / .- --- .-.. / --- .. ... ... --.. / -.. --- .-.. -.-- .-.. / -.- .--. ... ...- - .... ..-. --.. / -. -.-- ...- -.. / .--. / -.-- .--. --.. .-.. / -... .-- / -.. -... .--. .-.. / --.. ...- -.. / .... ..- -.. / --.. ...- -.. / ... .-.. -- .- / .. .-.. -- .- .--. ..- -.- / .- --- .-.. / .. -... .--. ... -.. .--. ..- -. / .- --- .... .... / -. -.-- .... ..- .... .-.. -.- / .- --- .-.. / --.. .--- .-. ... ... / -- .--. ..- -.. / -... .-.. / .--. ..- / .... / - .-.. .- .-.. ... / .. ... -.. ...`
+- **Encryption Steps**: Plain → Caesar(+7) → Morse Code

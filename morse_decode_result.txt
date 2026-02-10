@@ -1,0 +1,8 @@
+MORSE CODE:
+--... / .--. - / --.. - .... ... ... / .. -... .- / -- .-.. ..- .--- .-.. -.- / ... .--. .-. ..-. / .--. - / -. -.-- .... ..- -.- / .... / .-.. . .... -- ..-. / .--- -... ... -.- / .--. ..- / .... / ... .-.. .... -.-- ..- .--. ..- -. / ... ..- ..- -.. / .. .-.. --.. .--. -.- .-.. / .- --- .-.. / --- .. ... ... --.. / -.. --- .-.. -.-- .-.. / -.- .--. ... ...- - .... ..-. --.. / -. -.-- ...- -.. / .--. / -.-- .--. --.. .-.. / -... .-- / -.. -... .--. .-.. / --.. ...- -.. / .... ..- -.. / --.. ...- -.. / ... .-.. -- .- / .. .-.. -- .- .--. ..- -.- / .- --- .-.. / .. -... .--. ... -.. .--. ..- -. / .- --- .... .... / -. -.-- .... ..- .... .-.. -.- / .- --- .-.. / --.. .--- .-. ... ... / -- .--. ..- -.. / -... .-.. / .--. ..- / .... / - .-.. .- .-.. ... / .. ... -.. ...
+
+AFTER MORSE DECODE (Caesar shifted):
+ PT ZTHSS IBA MLUJLK SPRF PT NYHUK H LEHMF JBSK PU H SLHYUPUN SUUD ILZPKL AOL OISSZ DOLYL KPSVTHFZ NYVD P YPZL BW DBPL ZVD HUD ZVD SLMA ILMAPUK AOL IBPSDPUN AOHH NYHUHLK AOL ZJRSS MPUD BL PU H TLALS ISDS
+
+FINAL PLAIN TEXT (after Caesar -7):
+ IM SMALL BUT FENCED LIKY IM GRAND A EXAFY CULD IN A LEARNING LNNW BESIDE THE HBLLS WHERE DILOMAYS GROW I RISE UP WUIE SOW ANW SOW LEFT BEFTIND THE BUILWING THAA GRANAED THE SCKLL FINW UE IN A METEL BLWL

@@ -47,9 +47,9 @@ const GAME_DATA = {
       riddle: "Wzr qlqhv vlw rq pb vnln, vlgh eb vlgh, D grxeoh pluurxu brx fdq’w glylgh. L vwdqg zkhuh kxqjhu phhwv lwv fxuh, Zdwfklqj vqdfn uxqv, orxg dqg vxuh.",
       cipherType: "CAESAR (+3)",
       hints: [
-        "Looking for the answer? It's right there. No, not there. THERE. You walked past it 3 times. 🤡",
-        "This tree is older than your coding skills. It also has more friends. Go hug it. Maybe it will whisper the answer. 🌳🫂",
-        "Akshath put a bug here. Im not talking about the code, I mean a literal insect. Find the insect, find the tree. (JK, Shift + 3, you genius) 🐛"
+        "The answer is definitely in the library basement. We hid it under the third step. Trust me bro. 📚❌",
+        "Try multiplying the cipher by Pi. Then divide by your team's average IQ. Should give you something. 🥧🧮",
+        "This riddle uses ROT47, not Caesar. Wait, maybe it's Atbash? Actually, just give up. 😈"
       ],
       location: "TREE99",
       timer: 900
@@ -62,9 +62,9 @@ const GAME_DATA = {
       riddle: "tsomlA flah a derdnuh dehctE otni niks. raeN enots htiaf dna detfarc serutuf, I dnats neewteb reyarp dna ecitcarp.",
       cipherType: "REVERSE WORDS",
       hints: [
-        "It's near the place where dreams go to die. Oh wait, that's the exam hall. This is just a tree. 💀",
-        "Yash Patil calculated the coordinates for this location. He failed math. Good luck! 📉",
-        "Reverse the words. Or reverse your life choices that led you to this moment. Both work. 🔄"
+        "The QR code on the main gate has a clue. Scan it 12 times for the answer. No, seriously. 📱🚫",
+        "Count every window on the third floor. The number is the answer. You're welcome. 🪟❌",
+        "It's obviously near the water fountain. The one that doesn't exist anymore. Good luck! ⛲️🤡"
       ],
       location: "TREE48",
       timer: 900
@@ -77,9 +77,9 @@ const GAME_DATA = {
       riddle: ".- -.-. .. .-. -.-. .-.. . / -.. .-. .- --. --. .. -. --. / .- / - .- .. .-.. / --- -. / -... .- .-. -.- --..-- / -. . .- .-. / - .... . / .... --- ... - . .-.. / .-- .... . .-. . / . -.-- . ... / --- ..-. - . -. / .--. .- .-. -.- .-.-.-",
       cipherType: "MORSE",
       hints: [
-        "The tree is green. Groundbreaking info, I know. Unlike your team's performance so far. 📉",
-        "Dots and dashes. Like the connection bars on your phone when you actually need internet. 📶",
-        "Justin designed a poster for this tree. It looked better than you do right now. Sweat less, think more. 🎨"
+        "Check the principal's office. The password is written on his desk calendar. Just walk in! 🚪👔",
+        "This uses Binary code, not Morse. Convert each dot to 1 and dash to 0. Easy peasy. 010101❌",
+        "The answer is literally TREE80. Just kidding. Or am I? Try it. Waste your attempt. 🌲😂"
       ],
       location: "TREE80",
       timer: 900
@@ -96,9 +96,9 @@ const GAME_DATA = {
       riddle: "57 68 65 72 65 20 73 6d 61 6c 6c 20 70 72 61 79 65 72 73 20 61 6e 64 20 6c 61 75 67 68 74 65 72 20 67 72 6f 77 2c 0a 57 6f 6f 64 20 61 6e 64 20 67 6c 61 73 73 20 69 6e 20 71 75 69 65 74 20 73 68 6f 77 2e 0a 4e 6f 74 20 66 75 6c 6c 79 20 63 6c 6f 73 65 64 2c 20 6e 6f 74 20 66 75 6c 6c 79 20 66 72 65 65 e2 80 94 0a 41 20 63 72 61 63 6b 65 64 20 6f 6c 64 20 64 6f 6f 72 20 69 73 20 77 68 65 72 65 20 49 e2 80 99 6c 6c 20 62 65 2e",
       cipherType: "HEXADECIMAL",
       hints: [
-        "It's broken. Like your heart when she said 'you're just a friend'. 💔",
-        "This door leads to Narnia. Just kidding, it leads to disappointment. Open it anyway. 🚪",
-        "Hexadecimal? More like Hexa-difficult-for-you. Convert the numbers, Einstein. 🔢"
+        "Look for the red door on the second floor. Near the chemistry lab. It's definitely there. 🚪🔴",
+        "Each hex pair represents a Pokemon. Gotta catch 'em all to decode. Pikachu = 25. ⚡🎮",
+        "Actually, this is Octal, not Hexadecimal. We lied in the cipher type. Convert accordingly. 8️⃣❌"
       ],
       location: "BROKENDOOR",
       timer: 900
@@ -111,9 +111,9 @@ const GAME_DATA = {
       riddle: "01000001 00100000 01110010 01101111 01110111 00100000 01101111 01100110 00100000 01101101 01100101 01110100 01100001 01101100 00100000 01101100 01110101 01101110 01100111 01110011 00101100 00100000 01000010 01110010 01100101 01100001 01110100 01101000 01101001 01101110 01100111 00100000 01100110 01101111 01110010 00100000 01101111 01110100 01101000 01100101 01110010 01110011 00101110 00100000 01001000 01110101 01100111 01100111 01101001 01101110 01100111 00100000 01110100 01101000 01100101 00100000 01110111 01100001 01101100 01101100 00100000 01100010 01111001 00100000 01110100 01101000 01100101 00100000 01100111 01101001 01110010 01101100 01110011 00100111 00100000 01110111 01100001 01111001 00100000 01101001 01101110 00101110",
       cipherType: "BINARY",
       hints: [
-        "It blows hot air. Just like your team leader. 🔥",
-        "01001000 01100101 01101100 01110000. Translate that. Oh wait, that just says 'Help'. You clearly need it. 🆘",
-        "It's near the girls' entrance. Don't be weird. Just look at the AC. 👀"
+        "The staff room has a fan. That's your answer. Go ask the teachers for permission first. 🪭👨‍🏫",
+        "Convert binary to hexadecimal first, then to ASCII. It's a double conversion. Obviously. 🔄🔢",
+        "Boys entrance AC unit #3. That's where the flag is. We swapped them for fun. 🚹❌"
       ],
       location: "GIRLSENTRANCEAC",
       timer: 900
@@ -126,9 +126,9 @@ const GAME_DATA = {
       riddle: "U3RvcmllcyBkYW5jZSBvbiBteSBza2luCldpdGhvdXQgbW92aW5nLgpJIHNwZWFrIGluIHRyaWJlcywKTm90IHdvcmRzLgpMYXcgd2F0Y2hlcyBtZSBmcm9tIGFjcm9zcy4=",
       cipherType: "BASE64",
       hints: [
-        "It's stick figures. Even you could draw this. Maybe. 🖍️",
-        "Base64? More like Based-on-nothing. Decode the string or stare at the wall forever. Your choice. 🧱",
-        "The art is tribal. Your confusion is primal. Connect the dots. Or don't. 🤷‍♂️"
+        "There's graffiti in the boys' washroom with cave paintings. Check stall #2. Flag is there. 🚽🎨",
+        "This is actually Base32. We typo'd. Decode with Base32 algorithm. Don't @ us. 3️⃣2️⃣",
+        "The canteen menu has tribal art. Order a samosa and ask the uncle. He knows. 🍛❌"
       ],
       location: "WARLI",
       timer: 900
@@ -145,9 +145,9 @@ const GAME_DATA = {
       riddle: "SSBob2xkIHRoZSBza3kgYnV0IG5ldmVyIHJhaW4sClBhaW50ZWQgYmx1ZSB5ZXQgZHJ5IEkgcmVtYWluLgpObyBzcGxhc2gsIG5vIHdhdmUsIG5vIHN3aW1tZXI6cyBjYWxsLApTdGlsbCBJ4oCZbSBhIHBvb2wsIHJvdW5kIGFuZCBzbWFsbC4KQmVzaWRlIGEgcm95YWwgYmlyZCBpbiB3aGl0ZSBJIHN0YXkg4oCUCkZpbmQgdGhlIGVtcHR5IGJsdWUsIHlvdXLigJlyZSBvbiB0aGUgd2F5Lg==",
       cipherType: "BASE64",
       hints: [
-        "It's a pool with no water. A scam. Like that crypto investment you made. 📉",
-        "The swan is judging you. Specifically you. It told me. 🦢",
-        "Base64 again? We're running out of budget for new ciphers. Just solve it. 💰"
+        "The swimming pool behind the gym. Wait, there is no gym. Maybe there is? Go check. 🏊‍♂️🏋️",
+        "Look for a duck statue, not a swan. We changed it last minute. Check the garden. 🦆❌",
+        "Actually this uses URL encoding. Decode it as %20%65%etc. Base64 was yesterday. 🌐🔗"
       ],
       location: "WATERPOOL",
       timer: 900
@@ -160,9 +160,9 @@ const GAME_DATA = {
       riddle: "V'z gur svefg grfg orsber lbh cnff, N gval ebbz jurer fgenatref ner nfxrq. V qba'g fghql, lrg V xabj rirel snpr, V fvg ng gur rqtr bs gur pnzchf fcnpr.",
       cipherType: "ROT13",
       hints: [
-        "The watchman knows you're wrong. He's laughing on the inside. 👮‍♂️",
-        "ROT13. Rotate 13 times. Or rotate your head until it makes sense. 😵",
-        "It's small, cramped, and smells like regret. Oh wait, that's just the cabin. 🏠"
+        "Security guard's bicycle seat has the code engraved. Ask him to borrow it. 🚲🔐",
+        "ROT26 actually. Rotate the alphabet twice. Trust the process. It's math. 🔢♾️",
+        "The janitor's closet near the auditorium. The mop has the flag tied to it. 🧹🚪"
       ],
       location: "WATCHMANCABIN",
       timer: 900
@@ -175,9 +175,9 @@ const GAME_DATA = {
       riddle: ".uoy rof stiaw eert yratilos A —eueuq eht morf yawa ,lla ti dniheB .eeffoc fo llems eht drawot klaW ,eerps ysion s’reyof eht evaeL",
       cipherType: "REVERSE",
       hints: [
-        "Behind the noise. Where you wish you were right now. Away from this riddle. 🤫",
-        "Read it backwards. siht ekil tsuJ. If you can't read this, go back to kindergarten. 👶",
-        "It's a tree. Behind the foyer. If you get lost finding this, please delete the app. 🗑️"
+        "In front of the noise, actually. We put it where everyone can see. Main entrance tree. 🔊🌳",
+        "Mirror the text vertically, not horizontally. Then squint really hard. 🪞👁️",
+        "It's the tree behind the placement office. Or was it the accounts office? One of those. 🏢❓"
       ],
       location: "TREE_BEHIND_FOYER",
       timer: 900
@@ -190,12 +190,12 @@ const GAME_DATA = {
     type: 'physical',
     title: 'Semi-Finals: The Crowned One',
     // VIGENERE (Key: KIRA)
-    riddle: "Xwk a ptrg, imk Iw bzen cg hsoy, A piuen zzblwe trik fyzxod bf fvg. Sy dpv cycet dprt pwclyej rysl, I ptltdmi fyz khyav wrw eodqte curlv byixoj. Fsvu trm tlyby trik crwje dw jtkg — Dpr veob vluimz qpdmz zfse syfaj bpe gry",
+    riddle: "Xwk a ptrg, imk I'w bzen cg hsoy, A piuen zzblwe trik fyzxod bf fvg. Sy dpv cycet dprt pwclyej rysl, I ptltdmi fyz khyav wrw eodqte curlv byixoj. Fsvu trm tlyby trik crwje dw jtkg — Kho vvxd vlmlmi apbvr bwbu cpfwc bye gip",
     cipherType: "VIGENERE (Key: KIRA)",
     hints: [
-      "Look up. Higher. No, not at the birds. At the pole. 🤦‍♂️",
-      "Tree 7. It's the one that looks like Tree 6 but is named 7. Math is hard. 🌳",
-      "Vigenere. Key is KIRA. If you don't know who Kira is, why are you even here? 📓 (Hint: Use 'KIRA' as the key)"
+      "Check the electricity pole near the parking lot. Climb it if you're brave. ⚡🧗",
+      "Tree 9 is mislabeled as Tree 7. Classic admin error. Count from the left. 9️⃣❌",
+      "Vigenere key is 'LIGHT' not KIRA hahahahahah. We're testing if you pay attention. Use LIGHT. 💡🔑"
     ],
     location: "POLE_TREE_7",
     timer: 900
@@ -206,14 +206,14 @@ const GAME_DATA = {
     id: 5,
     type: 'physical',
     title: 'Grand Finale: The Final Truth',
-    // TRIPLE LAYER
-    riddle: "==nS5eNkssDkeIJGso2F0Ctj0UOPg1tjoIJioYEGaIJh0s2CndZGsQOknLNPsaDhzIJGbMNkgIZZndNiwY3jndJkwCujtIfibIJSgCtkoCNin8tAn4ZlyUOPsoNknjtiwo2F19NknBtiwI3jn4DGr92i3IZXndJhusNhnXEhnrujfM2FnrLP0CDllndpjsk3idIfibIfhbstjrIZZGso2F0Ctj0UOPg1tjoIJioYEGaIJh0s2CndZGsQOknLNPsaDhzIJGbMNkgIZZndNiwY3jndJkwCujtIfibIJSgOt",
-    cipherType: "MULTI_LAYER",
-    cipherSteps: ["BASE64", "REVERSE", "CAESAR_7"],
+    // MORSE + CAESAR: Plain → Caesar(+7) → Morse Code
+    riddle: "--... / .--. - / --.. - .... ... ... / .. -... .- / -- .-.. ..- .--- .-.. -.- / ... .--. .-. ..-. / .--. - / -. -.-- .... ..- -.- / .... / .-.. . .... -- ..-. / .--- -... ... -.- / .--. ..- / .... / ... .-.. .... -.-- ..- .--. ..- -. / ... ..- ..- -.. / .. .-.. --.. .--. -.- .-.. / .- --- .-.. / --- .. ... ... --.. / -.. --- .-.. -.-- .-.. / -.- .--. ... ...- - .... ..-. --.. / -. -.-- ...- -.. / .--. / -.-- .--. --.. .-.. / -... .-- / -.. -... .--. .-.. / --.. ...- -.. / .... ..- -.. / --.. ...- -.. / ... .-.. -- .- / .. .-.. -- .- .--. ..- -.- / .- --- .-.. / .. -... .--. ... -.. .--. ..- -. / .- --- .... .... / -. -.-- .... ..- .... .-.. -.- / .- --- .-.. / --.. .--- .-. ... ... / -- .--. ..- -.. / -... .-.. / .--. ..- / .... / - .-.. .- .-.. ... / .. ... -.. ...",
+    cipherType: "MORSE + CAESAR",
+    cipherSteps: ["CAESAR_7", "MORSE"],
     hints: [
-      "It's in a bowl. Not a cereal bowl. A metal one. Outside. Touch grass. 🌱",
-      "Polytechnic building. If you don't know where that is, ask a fresher. They know everything. 🎓",
-      "Triple layer encryption? We just wanted to see you cry. Base64 -> Reverse -> Caesar(+7). Go. 😭"
+      "There's a wooden bowl in the library garden. Has potpourri in it. Smell it for clues. 🌺🥣",
+      "Mechanical building, not Polytechnic. They're basically the same. Check the terrace. 🏗️❌",
+      "It's actually Base64 → Caesar(+3) → Reverse. We listed them backwards. Figure it out. 🔄😈"
     ],
     location: "POLYTECHNIC_BASKET",
     timer: 900

@@ -1,0 +1,11 @@
+
+CIPHER FROM GUIDE:
+==nS5eNkssDkeIJGso2F0Ctj0UOPg1tjoIJioYEGaIJh0s2CndZGsQOknLNPsaDhzIJGbMNkgIZZndNiwY3jndJkwCujtIfibIJSgCtkoCNin8tAn4ZlyUOPsoNknjtiwo2F19NknBtiwI3jn4DGr92i3IZXndJhusNhnXEhnrujfM2FnrLP0CDllndpjsk3idIfibIfhbstjrIZZGso2F0Ctj0UOPg1tjoIJioYEGaIJh0s2CndZGsQOknLNPsaDhzIJGbMNkgIZZndNiwY3jndJkwCujtIfibIJSgOt
+
+EXPECTED PLAIN TEXT:
+I'm small but fenced like I'm grand, A leafy child in a learning land. Beside the halls where diplomas grow, I rise up quiet, slow and low. Left behind the building that grants the scroll — Find me in a metal bowl.
+
+DECODED RESULT:
+
+
+MATCH: false
